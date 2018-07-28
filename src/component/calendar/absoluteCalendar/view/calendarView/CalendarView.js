@@ -6,13 +6,15 @@ import Utils from './../../../../utils/Utils'
 
 const CalendarView = (props) => {
     let defaultWeekDayColor = "red";
-    let defaultWeekDaySize = "small";   
+    let defaultWeekDaySize = "small";
+      let today = new Date();
 
-    let dateValues=Utils.generateCalendarData(new Date(parseInt(props.selectedYear,10),parseInt(props.selectedMonth,10)-1,1));
-  console.log("CalanderView component : render called");
+    let dateValues = Utils.generateCalendarData(new Date(parseInt(props.selectedYear, 10), parseInt(props.selectedMonth, 10) - 1, 1));
+    console.log("CalanderView component : render called");
+
     return (
-      
-      <Grid columns={16} centered  >
+
+        <Grid columns={16} centered  >
             <Grid.Row style={{ paddingBottom: '0px' }}>
                 {Utils.WeekDayValues.map((item, index) => {
                     return (
@@ -23,14 +25,28 @@ const CalendarView = (props) => {
                 })
                 }
             </Grid.Row >
-            {dateValues.map((item,index) => {
+            {dateValues.map((item, index) => {
                 return (
                     <Grid.Row key={index} style={{ paddingTop: '2px', paddingBottom: '0px' }}>
                         {
                             item.map((value, index) => {
-                                        return (
+                                let color="black";
+                                let disabled = false;
+                                let thisDay = new Date(props.selectedYear, props.selectedMonth-1, parseInt(value, 10));
+                                if (thisDay) {
+                                    if (today < thisDay) {
+                                        disabled = true;
+                                        color="grey";
+                                    }
+                                }
+                                if(props.selectedDate===parseInt(value, 10)){
+                                    color="blue";
+                                    disabled = true;
+                                }
+
+                                return (
                                     <Grid.Column key={value + "-" + index}>
-                                        {(value !== "") ? <DateItem {...props} value={value} /> : ""}
+                                        {(value !== "") ? <DateItem {...props} disabled={disabled} color={color} value={value} /> : ""}
                                     </Grid.Column>
                                 );
                             })

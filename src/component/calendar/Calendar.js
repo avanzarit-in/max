@@ -47,7 +47,7 @@ export default class Calendar extends Component {
                 {
                     (this.state.activeItem === 'quick') ? <Segment attached > <QuickCalendar /> </Segment> :
                         (this.state.activeItem === 'relative') ? <Segment attached ><RelativeCalendar /> </Segment> :
-                            (this.state.activeItem === 'absolute') ? <Segment attached ><AbsoluteCalendar fromDateChangeCallback={this.setFromDate} toDateChangeCallback={this.setToDate} /> </Segment> :
+                            (this.state.activeItem === 'absolute') ? <Segment attached ><AbsoluteCalendar fromDate={this.state.fromDate} callback={this.setFromDate} toDate={this.state.toDate} callback={this.setToDate} /> </Segment> :
                                 null
                 }
                 <Segment attached="bottom" basic>

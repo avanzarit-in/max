@@ -1,6 +1,8 @@
 import React from 'react'
 import {Grid,Button} from 'semantic-ui-react'
 const Footer = (props) => {
+    console.log(props.fromDate);
+    console.log(props.toDate);
     return (
         <Grid columns={16} >
            <Grid.Row >

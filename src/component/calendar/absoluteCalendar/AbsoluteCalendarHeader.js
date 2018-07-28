@@ -12,7 +12,11 @@ export default class AbsoluteCalendarHeader extends Component {
     //For example this method is called by the AbsoluteCalendar component when user selects a date from the calendarView
     //to update the text box with the date selected
     setDate = (date) => {
-        this.setState({ date: moment(date, ["YYYY/MM/DD", "YYYY/M/D", "YYYY/MM/D", "YYYY/M/DD"], true).format('YYYY/MM/DD') })
+        let inputDate = moment(date, ["YYYY/MM/DD", "YYYY/M/D", "YYYY/MM/D", "YYYY/M/DD"], true);
+        if (inputDate.isValid()) {
+            this.setState({ date: inputDate.format('YYYY/MM/DD') })
+            this.setState({ error: false });
+        }
     }
 
     //called from this component as user starts typing into the textfield
@@ -21,11 +25,11 @@ export default class AbsoluteCalendarHeader extends Component {
 
         if (!moment(typeInDate, ["YYYY/MM/DD", "YYYY/M/D", "YYYY/MM/D", "YYYY/M/DD"], true).isValid()) {
             this.setState({ error: true });
-
         } else {
             this.setState({ error: false });
-            this.props.dateSelectedCallback(typeInDate);
         }
+        //pass the typed in date back to the AbsoluteCalendar component
+        this.props.callback(typeInDate);
         this.setState({ date: typeInDate })
     }
 
@@ -34,7 +38,8 @@ export default class AbsoluteCalendarHeader extends Component {
         let date = new Date();
         this.setState({ date: moment(date).format('YYYY/MM/DD') })
         this.setState({ error: false });
-        this.props.dateSelectedCallback(date);
+        //pass the typed in date back to the AbsoluteCalendar component
+        this.props.callback(moment(date).format('YYYY/MM/DD'));
     }
 
     render() {
