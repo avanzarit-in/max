@@ -9,20 +9,20 @@ import moment from 'moment'
 export default class Calendar extends Component {
     state = {
         activeItem: 'absolute',
-        fromDate:new Date(),
-        toDate:new Date()
+        fromDate: new Date(),
+        toDate: new Date()
     }
 
     //called from Absolute/quick/relative calendar component once a from date is selected
     setFromDate = (date) => {
         console.log("From Date :" + date);
-        this.setState({fromDate:date})
+        this.setState({ fromDate: date })
     }
 
-//called from Absolute/quick/relative calendar component once a from date is selected
+    //called from Absolute/quick/relative calendar component once a from date is selected
     setToDate = (date) => {
         console.log("To Date :" + date);
-        this.setState({toDate:date})
+        this.setState({ toDate: date })
     }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -45,13 +45,16 @@ export default class Calendar extends Component {
             </Menu.Item>
                 </Menu>
                 {
-                    (this.state.activeItem === 'quick') ? <Segment attached > <QuickCalendar /> </Segment> :
-                        (this.state.activeItem === 'relative') ? <Segment attached ><RelativeCalendar /> </Segment> :
-                            (this.state.activeItem === 'absolute') ? <Segment attached ><AbsoluteCalendar fromDate={this.state.fromDate} callback={this.setFromDate} toDate={this.state.toDate} callback={this.setToDate} /> </Segment> :
+                    (this.state.activeItem === 'quick') ?
+                        <Segment attached > <QuickCalendar /> </Segment> :
+                        (this.state.activeItem === 'relative') ?
+                            <Segment attached ><RelativeCalendar /> </Segment> :
+                            (this.state.activeItem === 'absolute') ?
+                                <Segment attached ><AbsoluteCalendar fromDate={this.state.fromDate} setFromDateCallback={this.setFromDate} toDate={this.state.toDate} setToDateCallback={this.setToDate} /> </Segment> :
                                 null
                 }
                 <Segment attached="bottom" basic>
-                    <Footer fromDate={this.state.fromDate} toDate={this.state.toDate}/>
+                    <Footer fromDate={this.state.fromDate} toDate={this.state.toDate} />
                 </Segment>
             </div>
         );
