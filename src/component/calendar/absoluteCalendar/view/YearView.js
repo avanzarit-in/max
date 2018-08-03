@@ -3,7 +3,7 @@ import { Label, Grid } from 'semantic-ui-react'
 import Utils from './../../../utils/Utils'
 
 const YearView = (props) => {
-      console.log("YearView component : render called");
+    console.log("YearView component : render called");
     return (
         <Grid padded="horizontally" centered >
             {
@@ -13,7 +13,15 @@ const YearView = (props) => {
                             <Grid.Column textAlign="center">
                                 {
                                     item.map(value => {
-                                        return (<Label key={value.value} style={{ width: '65px' }} as="a" color="black" size="tiny" onClick={() => props.changeTitle(value.text)}>{value.text}</Label>)
+                                        return (
+                                            <Label
+                                                key={value.value}
+                                                style={{ width: '65px' }}
+                                                as="a" color="black" size="tiny"
+                                                onClick={(e) => props.changeTitle(e, value.text, props.selectedMonth)}
+                                            >{value.text}
+                                            </Label>
+                                        )
                                     })
                                 }
                             </Grid.Column>

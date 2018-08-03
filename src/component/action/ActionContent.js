@@ -8,11 +8,11 @@ const ActionContent = (props) => {
     return (
         <div>
             <ActionContentTitle title={props.title} close={props.close} />
-            {(props.name === "calendar") ? <Calendar /> :
-                (props.name === "download") ? <Download /> :
+            {(props.name === "calendar") ? <Calendar {...props} /> :
+                (props.name === "download") ? <Download fromDate={props.fromDate} toDate={props.toDate} /> :
                     null}
         </div>
     );
-
 }
+
 export default ActionContent;

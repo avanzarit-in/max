@@ -31,7 +31,7 @@ const Utils = (() => {
         let month = date.getMonth();
         let lastDayOfTheMonth = this.dayPerMonth[month];
         if (month === 1) {
-            if ((year % 100 !== 0) && (year % 4 === 0) || (year % 400 === 0)) {
+            if (((year % 100 !== 0) && (year % 4 === 0)) || (year % 400 === 0)) {
                 lastDayOfTheMonth = 29;
             } else {
                 lastDayOfTheMonth = 28;

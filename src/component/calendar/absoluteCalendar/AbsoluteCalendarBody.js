@@ -1,103 +1,85 @@
 import React, { Component } from 'react'
 import { Grid, Button, Icon } from 'semantic-ui-react'
-import Utils from './../../utils/Utils'
 import CalendarView from './view/calendarView/CalendarView'
 import MonthsView from './view/MonthsView'
 import YearView from './view/YearView'
 import moment from 'moment'
 
 export default class AbsoluteCalendarBody extends Component {
-
-    constructor(props) {
-        super(props);
-        let dateNow = new Date();
-        let month = Utils.Months.get(dateNow.getMonth());
-        let year = dateNow.getFullYear();
-
-        this.state = {
-            mode: "calendar",
-            month: month,
-            year: year,
-            date: dateNow.getDate()
-        }
+    state = {
+        mode: "calendar"
     }
 
-    //This method is exposed to outside which can be called to update the state and force a rerender of the component
-    setDate = (date) => {
-        let formatedDate = moment(date, ["YYYY/MM/DD", "YYYY/M/D", "YYYY/MM/D", "YYYY/M/DD"], true);
-        if (formatedDate.isValid()) {
-            this.setState({ month: Utils.Months.get(formatedDate.get('month')) });
-            this.setState({ year: formatedDate.get('year') });
-            this.setState({ date: formatedDate.get('date') });
-        } else {
-            //unselect the previously selected date
-            this.setState({ date: undefined })
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.errorFlag) {
+            return false;
         }
+        let oldDate = moment(this.props.date, ["YYYY/MM/DD"], true);
+        let newDate = moment(nextProps.date, ["YYYY/MM/DD",], true);
+
+        if ((this.state.mode !== nextState.mode)||
+         (newDate.isValid() && oldDate.isValid())||
+         (newDate.isValid() && !oldDate.isValid())) {
+            return true;
+        }   
+
+        return false;
     }
 
-    changeTitle = (input) => {
+    changeTitle = (event, year, month) => {
         if (this.state.mode === "month") {
-            let date = Utils.Months.get(parseInt(input, 10) - 1);
-            this.setState({ mode: "calendar", month: date });
+            this.setState({ mode: "calendar" });
         } else if (this.state.mode === "year") {
-            this.setState({ mode: "month", year: input });
+            this.setState({ mode: "month" });
         }
-        //this is done to make sure we unselect the previously selected date
-        this.setState({ date: undefined })
+
+        this.props.callback(moment(new Date(year, month, 1)).format("YYYY/MM/DD"));
     }
 
-    onChange = (event, data) => {
+    changeMode = (e, year, month) => {
         if (this.state.mode === "calendar") {
             this.setState({ mode: "month" })
         } else if (this.state.mode === "month") {
             this.setState({ mode: "year" })
         }
-        //this is done to make sure we unselect the previously selected date
-        this.setState({ date: undefined })
     }
 
-    decMonth = () => {
-        let currentMonth = parseInt(this.state.month.value, 10) - 1;
-        let currentYear = parseInt(this.state.year, 10);
-        let updatedMonth = Utils.Months.get(currentMonth - 1);
-        if (currentMonth === 0) {
-            updatedMonth = Utils.Months.get(11);
-            currentYear--;
+    decMonth = (event, year, month) => {
+        month--;
+        if (month === 0) {
+            month = 11;
+            year--;
         }
+        let date = moment(new Date(year, month, 1));
 
-        this.setState({ month: updatedMonth, year: currentYear });
-        //this is done to make sure we unselect the previously selected date
-        this.setState({ date: undefined })
+        this.props.callback(date.format("YYYY/MM/DD"));
     }
 
-    incMonth = () => {
-        let currentMonth = parseInt(this.state.month.value, 10) - 1;
-        let currentYear = parseInt(this.state.year, 10);
-        let updatedMonth = Utils.Months.get(currentMonth + 1);
-        if (currentMonth === 11) {
-            updatedMonth = Utils.Months.get(0);
-            currentYear++;
+    incMonth = (event, year, month) => {
+        month++;
+        if (month === 11) {
+            month = 0;
+            year++;
         }
-        this.setState({ month: updatedMonth, year: currentYear });
-        //this is done to make sure we unselect the previously selected date
-        this.setState({ date: undefined })
-    }
+        let date = moment(new Date(year, month, 1));
 
-    //This callback method received the date selected by clicking the DateItem
-    dateSelectedCallback = (dateItem) => {
-        let dateSelected = new Date(parseInt(this.state.year, 10), parseInt(this.state.month.value, 10) - 1, parseInt(dateItem, 10));
-        //Propagates the selected date to the AbsoluteCalendar
-        this.props.callback(dateSelected);
-        //by setting the date re-render this component and all its child component so that the CalendarView can show the proper selected date in color
-        this.setState({ date: parseInt(dateItem, 10) })
+        this.props.callback(date.format("YYYY/MM/DD"));
     }
 
     render() {
-        console.log("From Date"+this.props.fromDate+" To Date"+this.props.toDate);
-        console.log("AbsoluteCalendarBody component : render called");
-        let displayText = this.state.month.text + " " + this.state.year
+        console.log("AbsoluteCalendarBody component : render called ");
+        let dateFormatted = this.props.date;
+        let date = moment(dateFormatted, ["YYYY/MM/DD"], true);
+
+        let monthText = date.format('MMMM');
+        let month = date.get('month');
+        let year = date.get('year');
+        let dateValue = date.get('date')
+
+        let displayText = monthText + " " + year
+
         if (this.state.mode === "month") {
-            displayText = this.state.year
+            displayText = year
         } else if (this.state.mode === "year") {
             displayText = "2015 - 2018"
         }
@@ -105,16 +87,30 @@ export default class AbsoluteCalendarBody extends Component {
         return (
             <div>
                 <Grid centered>
-                    <Icon name="angle left" style={{ paddingTop: '3px', marginRight: '10px', cursor: 'pointer' }} onClick={this.decMonth} />
-                    <Button size="tiny" onClick={this.onChange}>{displayText}</Button>
-                    <Icon name="angle right" style={{ paddingTop: '3px', cursor: 'pointer' }} onClick={this.incMonth} />
+                    <Icon name="angle left" style={{ paddingTop: '3px', marginRight: '10px', cursor: 'pointer' }} onClick={(e) => this.decMonth(e, year, month)} />
+                    <Button size="tiny" onClick={(e) => this.changeMode(e, year, month)}>
+                        {displayText}
+                    </Button>
+                    <Icon name="angle right" style={{ paddingTop: '3px', cursor: 'pointer' }} onClick={(e) => this.incMonth(e, year, month)} />
                 </Grid>
 
-                {(this.state.mode === "calendar") ? <CalendarView selectedYear={this.state.year} selectedMonth={this.state.month.value} selectedDate={this.state.date} callback={this.dateSelectedCallback} changeTitle={this.changeTitle} /> :
-                    (this.state.mode === "month") ? <MonthsView selectedYear={this.state.year} changeTitle={this.changeTitle} /> :
-                        (this.state.mode === "year") ? <YearView changeTitle={this.changeTitle} />
-                            : null}
-
+                {(this.state.mode === "calendar") ?
+                    <CalendarView
+                        selectedYear={year}
+                        selectedMonth={month}
+                        selectedDate={dateValue}
+                        type={this.props.type}
+                        otherDate={this.props.otherDate}
+                        callback={this.props.callback}
+                    /> :
+                    (this.state.mode === "month") ?
+                        <MonthsView selectedYear={year}
+                            changeTitle={this.changeTitle}
+                        /> :
+                        (this.state.mode === "year") ?
+                            <YearView selectedMonth={month} changeTitle={this.changeTitle}
+                            /> :
+                            null}
             </div>
         )
     }
