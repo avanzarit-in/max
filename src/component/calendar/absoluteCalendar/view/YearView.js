@@ -3,7 +3,7 @@ import { Label, Grid } from 'semantic-ui-react'
 import Utils from './../../../utils/Utils'
 
 const YearView = (props) => {
-    console.log("YearView component : render called");
+   // console.log("YearView component : render called");
     return (
         <Grid padded="horizontally" centered >
             {
@@ -18,7 +18,7 @@ const YearView = (props) => {
                                                 key={value.value}
                                                 style={{ width: '65px' }}
                                                 as="a" color="black" size="tiny"
-                                                onClick={(e) => props.changeTitle(e, value.text, props.selectedMonth)}
+                                                onClick={(e) => props.changeTitle(e, value.text, props.date.get('month'))}
                                             >{value.text}
                                             </Label>
                                         )

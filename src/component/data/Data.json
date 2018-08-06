@@ -1,0 +1,86 @@
+{
+    "customerName": "Avanzar IT",
+    "sapId": "1010",
+    "balance": 567789,
+    "payload": {
+        "1": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,"RECEIVED FROM AROHI ENT"
+        ],
+        "2": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "3": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "4": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "5": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "6": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "7": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "8": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "9": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ],
+        "10": [
+            "Receipt from Customer","1400000021","03.04.2018","RTGS13.03",
+            0,
+            0,
+            220000,
+            -382248,
+            "RECEIVED FROM AROHI ENT"
+        ]
+    }
+}

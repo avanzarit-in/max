@@ -8,10 +8,10 @@ import Utils from './../../../../utils/Utils'
 const CalendarView = (props) => {
     let defaultWeekDayColor = "red";
     let defaultWeekDaySize = "small";
-    let today = new Date();
+    let today = moment();
 
-    let dateValues = Utils.generateCalendarData(new Date(props.selectedYear, props.selectedMonth, 1));
-    console.log("CalanderView component : render called");
+    let dateValues = Utils.generateCalendarData(props.date.toDate());
+    //  console.log("CalanderView component : render called");
 
     return (
 
@@ -27,44 +27,60 @@ const CalendarView = (props) => {
                 }
             </Grid.Row >
             {dateValues.map((item, index) => {
-                let otherDate = moment(props.otherDate, ["YYYY/MM/DD"], true);
-                let referenceDate = moment(new Date(props.selectedYear, props.selectedMonth, props.selectedDate));
-          
+                let otherDate = props.otherDate;
+                let referenceDate = moment(props.inputDate, ["YYYY/MM/DD"], true);
+
                 let type = props.type;
+
                 return (
                     <Grid.Row key={index} style={{ paddingTop: '2px', paddingBottom: '0px' }}>
                         {
                             item.map((value, index) => {
-                                let color = "black";
-                                let disabled = false;
-                                let thisDay = moment(new Date(props.selectedYear, props.selectedMonth, parseInt(value, 10)));
-                                if (thisDay) {
-                                    if (today < thisDay) {
-                                        disabled = true;
-                                        color = "grey";
-                                    }
-                                    else if (type === "to-date-calendar" && thisDay.isBefore(otherDate)) {
-                                        disabled = true;
-                                        color = "grey";
-                                    } else if (type === "to-date-calendar" && thisDay.isBefore(referenceDate) && thisDay.isSameOrAfter(otherDate)) {
-                                        if (thisDay.isSame(otherDate)) {
-                                            color = "blue"
-                                        } else {
-                                            color = "teal";
-                                        }
-                                    } else if (type === "from-date-calendar" && thisDay.isAfter(referenceDate) && thisDay.isSameOrBefore(otherDate)) {
-                                        
-                                        if (thisDay.isSame(otherDate)) {
-                                             color = "blue"
-                                        } else {
-                                            color = "teal";
-                                        }
-                                    } else if (today >= thisDay && props.selectedDate === parseInt(value, 10)) {
-                                        color = "blue";
-                                        disabled = true;
-                                    }
-                                }
 
+                                let color = "grey";
+                                let disabled = true;
+                                let thisDay = moment([props.date.get('year'), props.date.get('month'), parseInt(value, 10)]);
+                                //   if(type==="to-date-calendar"){
+                                // console.log(otherDate.format("YYYY/MM/DD")+","+referenceDate.format("YYYY/MM/DD")+","+thisDay.format("YYYY/MM/DD"))
+                                //   }
+
+                                if (thisDay.isValid() && !thisDay.isAfter(today)) {
+
+
+                                    if (type === "to-date-calendar") {
+                                        if (thisDay.isBetween(otherDate, referenceDate, 'date')) {
+                                            color = "teal";
+                                            disabled = false;
+                                        } else if (thisDay.isBefore(otherDate, 'date')) {
+                                            color = "grey";
+                                            disabled = true;
+                                        }else if (thisDay.isAfter(referenceDate, 'date')) {
+                                            color = "black";
+                                            disabled = false;
+                                        }else if(thisDay.isSame(referenceDate,'date')||thisDay.isSame(otherDate,'date')){
+                                            color="blue";
+                                            disabled = true;
+                                        }
+                                    } else if (type === "from-date-calendar") {
+                                        if (thisDay.isBetween(referenceDate, otherDate, 'date')) {
+                                            color = "teal";
+                                            disabled = false;
+                                        } else if (thisDay.isAfter(otherDate, 'date')) {
+                                            color = "grey";
+                                            disabled = true;
+                                        } else if (thisDay.isBefore(referenceDate, 'date')) {
+                                            color = "black";
+                                            disabled = false;
+                                        }else if(thisDay.isSame(referenceDate,'date')||thisDay.isSame(otherDate,'date')){
+                                            color="blue";
+                                            disabled = true;
+                                        }
+                                    }
+
+
+
+
+                                }
 
                                 return (
                                     <Grid.Column key={value + "-" + index}>

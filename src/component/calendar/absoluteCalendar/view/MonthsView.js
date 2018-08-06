@@ -1,12 +1,10 @@
 import React from "react"
 import { Label, Grid } from 'semantic-ui-react'
 import Utils from './../../../utils/Utils'
+import moment from 'moment'
 
 const MonthsView = (props) => {
-    let nowDate = new Date();
-    let currentYear = nowDate.getFullYear();
-    let currentMonth = nowDate.getMonth();
-  console.log("MonthsView component : render called");
+   
     return (
         <Grid padded="horizontally" centered >
             {
@@ -16,9 +14,10 @@ const MonthsView = (props) => {
                             <Grid.Column textAlign="center">
                                 {
                                     item.map(value => {
+                                                                              
                                         return (
-                                            ((parseInt(props.selectedYear, 10) < currentYear) || (parseInt(value.value, 10) - 1 <= currentMonth)) ?
-                                                <Label key={value.key} style={{ width: '65px' }} as="a" color="black" size="tiny" onClick={(e) => props.changeTitle(e,props.selectedYear,parseInt(value.key,10)-1)}>{value.text}</Label> :
+                                            (props.date.isBefore(moment(),'year') || moment().isSameOrAfter(moment([props.date.get('year'),value.key,1]),'month')) ?
+                                                <Label key={value.key} style={{ width: '65px' }} as="a" color="black" size="tiny" onClick={(e) => props.changeTitle(e,props.date.get('year'),value.key)}>{value.text}</Label> :
                                                 <Label key={value.key} style={{ width: '65px', cursor: 'not-allowed' }} as="a" color="grey" size="tiny" >{value.text}</Label>
                                         )
                                     })

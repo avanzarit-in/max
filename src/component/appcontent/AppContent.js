@@ -1,98 +1,44 @@
 import React, { Component } from 'react';
-import { Menu, Segment, Header, Button, Icon, Label, Form, Table, Sticky, Visibility } from 'semantic-ui-react';
-import ActionContent from './../action/ActionContent';
+import { Menu, Segment, Header, Button, Icon, Label, Form, Table, Sticky, Visibility, Modal, Popup,Pagination } from 'semantic-ui-react';
 import moment from 'moment'
+import Calendar from './../calendar/Calendar';
+import Download from './../download/Download';
+import data from './../data/Data.json'
 
 export default class AppContent extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state.data = data;
+    }
+
     state = {
         activeItem: '',
         fromDate: moment(new Date()).format("YYYY/MM/DD"),
         toDate: moment(new Date()).format("YYYY/MM/DD"),
-        errorFlag: false,
-        fromDateErrorFlag: false,
-        toDateErrorFlag: false,
         broughtForwardBalance: 0,
-        errorCodes: [],
         customerName: "Avanzar IT",
-        sapId: "1010"
+        sapId: "1010",
+        calendarModalOpen: false,
+        downloadModalOpen: false
     }
 
-    setFromDate = (date) => {
-        let inputDate = moment(date, ["YYYY/MM/DD"], true);
-        let toDate = moment(this.state.toDate, ["YYYY/MM/DD"], true);
-        let errorFlag = false;
-        let fromDateErrorFlag = false;
-        let errorCodes = [];
-        if (!inputDate.isValid()) {
-            fromDateErrorFlag = true;
-            errorCodes.push('INVALID_FROM_DATE');
-        }
-        errorFlag = inputDate.isAfter(toDate);
-        if (errorFlag) {
-            errorCodes.push("INVALID_DATE_RANGE")
-        }
-        errorFlag = errorFlag || this.state.toDateErrorFlag || fromDateErrorFlag;
-        this.setState({ errorFlag: errorFlag, fromDateErrorFlag: fromDateErrorFlag, errorCodes: errorCodes });
+    handleCalendarOpen = () => this.setState({ calendarModalOpen: true })
 
-        if (!errorFlag || errorCodes.find((element) => { return element === 'INVALID_FROM_DATE' })) {
+    handleCalendarClose = () => this.setState({ calendarModalOpen: false })
 
-            this.setState({ fromDate: date });
-        }
-    }
+    handleDownloadOpen = () => this.setState({ downloadModalOpen: true })
 
-    setToDate = (date) => {
-        let inputDate = moment(date, ["YYYY/MM/DD"], true);
-        let fromDate = moment(this.state.fromDate, ["YYYY/MM/DD"], true);
-        let errorFlag = false;
-        let toDateErrorFlag = false;
-        let errorCodes = [];
-        if (!inputDate.isValid()) {
-            toDateErrorFlag = true;
-            errorCodes.push('INVALID_TO_DATE');
-        }
-        errorFlag = inputDate.isBefore(fromDate);
-        if (errorFlag) {
-            errorCodes.push("INVALID_DATE_RANGE")
-        }
-        errorFlag = errorFlag || this.state.fromDateErrorFlag || toDateErrorFlag;
-        this.setState({ errorFlag: errorFlag, toDateErrorFlag: toDateErrorFlag, errorCodes: errorCodes });
-        if (!errorFlag || errorCodes.find((element) => { return element === 'INVALID_TO_DATE' })) {
-            this.setState({ toDate: date });
-        }
-    }
+    handleDownloadClose = () => this.setState({ downloadModalOpen: false })
 
-    handleItemClick = (e, { name }) => {
-        if (this.state.activeItem === name) {
-            this.setState({ activeItem: '' });
-        } else {
-            if (name === "calendar" && this.state.errorFlag) {
-                let resetState = { ...this.state };
-                resetState.fromDate = moment(new Date()).format("YYYY/MM/DD");
-                resetState.toDate = moment(new Date()).format("YYYY/MM/DD");
-                resetState.errorFlag = false;
-                resetState.fromDateErrorFlag = false;
-                resetState.toDateErrorFlag = false;
-                resetState.errorCodes = []
-
-                this.setState(resetState)
-            }
-            this.setState({ activeItem: name });
-        }
-    }
-
-
-    handleContextRef = contextRef => this.setState({ contextRef })
-
-
-    handleItemClosed = () => this.setState({ activeItem: '' })
 
     render() {
         const { activeItem } = this.state
         return (
             <div ref={this.handleContextRef}>
-                <Sticky context={this.state.contextRef}>
+               
                     <Menu borderless pointing attached="top"  >
-                        <Menu.Item header position="left">
+                        <Menu.Item header position="left" >
                             <Header as="h2" size="large">Dealer Dashboard</Header>
                         </Menu.Item>
                         <Menu.Item header position="right">
@@ -101,40 +47,42 @@ export default class AppContent extends Component {
                         <Menu.Menu position="right">
                             <Menu.Item
                                 name='calendar'
-                                active={activeItem === 'calendar'}
-                                onClick={this.handleItemClick}>
+                                active={activeItem === 'calendar'}>
                                 <Form.Field inline>
-                                    {this.state.errorFlag && activeItem !== "calendar" ?
-                                        <Label basic color='red' pointing='right'>
-                                            Please select a valid Date Range
-                                    </Label> : null}
-                                    <Button primary={activeItem === 'calendar' ? true : false}>
-                                        <Icon name='clock outline' />
-                                        {
-                                            this.state.errorFlag ? "Invalid Date Range" :
-                                                moment(this.state.fromDate, ["YYYY/MM/DD"], true).format("MMM Do YYYY") + " To " + moment(this.state.toDate, ['YYYY/MM/DD'], true).format("MMM Do YYYY")
-                                        }
-
-                                    </Button>
+                                    <Modal
+                                        style={{ height: '400px' }}
+                                        centered={false}
+                                        closeIcon
+                                        size="fullscreen"
+                                        trigger={<Button primary icon labelPosition='left' onClick={this.handleCalendarOpen}><Icon name='clock'/>{moment(this.state.fromDate, ["YYYY/MM/DD"], true).format("MMM Do YYYY") + " To " + moment(this.state.toDate, ['YYYY/MM/DD'], true).format("MMM Do YYYY")}</Button>}
+                                        open={this.state.calendarModalOpen}
+                                        onClose={this.handleCalendarClose}>
+                                        <Modal.Header>Select a Time Range to view the statement of account</Modal.Header>
+                                        <Modal.Content>
+                                            <Calendar />
+                                        </Modal.Content>
+                                    </Modal>
                                 </Form.Field>
                             </Menu.Item>
-                            {!this.state.errorFlag ?
-                                <Menu.Item
-                                    name='download'
-                                    active={activeItem === 'download'}
-                                    onClick={this.handleItemClick}>
-                                    <Button primary={activeItem === 'download' ? true : false}> <Icon name='download' />
-                                        Download</Button>
-                                </Menu.Item> : null
-                            }
+
+                            <Menu.Item
+                                name='download'
+                                active={activeItem === 'download'}>
+                                <Modal
+                                    centered={false}
+                                    closeIcon
+                                    size="mini"
+                                    trigger={<Button icon labelPosition='left' onClick={this.handleDownloadOpen}> <Icon name='download'/>Download</Button>}
+                                    open={this.state.downloadModalOpen}
+                                    onClose={this.handleDownloadClose}>
+                                    <Modal.Header>Download Statement</Modal.Header>
+                                    <Modal.Content>
+                                        <Download />
+                                    </Modal.Content>
+                                 </Modal>
+                            </Menu.Item>
                         </Menu.Menu>
                     </Menu>
-
-
-                    {(activeItem === "calendar") ? <ActionContent fromDate={this.state.fromDate} setFromDateCallback={this.setFromDate} toDate={this.state.toDate} setToDateCallback={this.setToDate} errorFlag={this.state.errorFlag} fromDateErrorFlag={this.state.fromDateErrorFlag} toDateErrorFlag={this.state.toDateErrorFlag} errorCodes={this.state.errorCodes} title="Select a Time Range to view the statement of account" close={this.handleItemClosed} name="calendar" /> :
-                        (activeItem === "download") ? <ActionContent fromDate={this.state.fromDate} setFromDateCallback={this.setFromDate} toDate={this.state.toDate} setToDateCallback={this.setToDate} errorFlag={this.state.errorFlag} errorCodes={this.state.errorCodes} title="Download Statement of Account" close={this.handleItemClosed} name="download" /> :
-                            null
-                    }
 
                     <Segment attached >
                         <Header
@@ -143,10 +91,10 @@ export default class AppContent extends Component {
                             subheader={'SAP Customer Id : ' + this.state.sapId}
                         />
                     </Segment>
-                </Sticky>
+             
 
                 <Segment attached="bottom" basic >
-                    <Table fixed basic="very">
+                    <Table striped fixed singleLine celled>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Doc. Ref</Table.HeaderCell>
@@ -161,540 +109,30 @@ export default class AppContent extends Component {
                             </Table.Row>
                         </Table.Header>
 
-                        <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Receipt from Customer</Table.Cell>
-                                <Table.Cell>1400000021</Table.Cell>
-                                <Table.Cell>03.04.2018</Table.Cell>
-                                <Table.Cell>RTGS 13.03</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>220,000.00</Table.Cell>
-                                <Table.Cell>-382,248.00</Table.Cell>
-                                <Table.Cell>RECEIVED FROM AROHI ENT</Table.Cell>
-                            </Table.Row>
-                            <Table.Row>
-                                <Table.Cell>Invoice</Table.Cell>
-                                <Table.Cell>10000447</Table.Cell>
-                                <Table.Cell>04.04.2018</Table.Cell>
-                                <Table.Cell>1802000179</Table.Cell>
-                                <Table.Cell>5</Table.Cell>
-                                <Table.Cell>37,3000.00</Table.Cell>
-                                <Table.Cell>0</Table.Cell>
-                                <Table.Cell>-344,948.00</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                            </Table.Row>
+                        <Table.Body style={{ fontSize: 'smaller' }} >
+                            {Object.keys(this.state.data.payload).map(key => {
+                                return (<Table.Row key={key}>
+                                    {this.state.data.payload[key].map((item, index) => {
+                                        return (<Table.Cell title={[
+                                            item
+                                        ].join(' ')} key={index}>{item}</Table.Cell>)
+                                    })}
+                                </Table.Row>
+                                );
+                            })}
+
                         </Table.Body>
+                        <Table.Footer>
+                            <Table.Row textAlign="right">
+                                <Table.HeaderCell colSpan='9'>
+                                   <Pagination defaultActivePage={5} totalPages={10} />
+                                </Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
                     </Table>
                 </Segment>
-                </div>
-     
+            </div>
+
         );
     }
 }

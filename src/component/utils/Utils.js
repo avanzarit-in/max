@@ -4,18 +4,18 @@ const Utils = (() => {
     this.monthsArrayofArray = [];
     this.yearsArrayofArray = [];
     this.Months = [];
-    this.Months.push({ "key": "01", "text": "January", "value": "01" })
-    this.Months.push({ "key": "02", "text": "February", "value": "02" })
-    this.Months.push({ "key": "03", "text": "March", "value": "03" })
-    this.Months.push({ "key": "04", "text": "April", "value": "04" })
-    this.Months.push({ "key": "05", "text": "May", "value": "05" })
-    this.Months.push({ "key": "06", "text": "June", "value": "06" })
-    this.Months.push({ "key": "07", "text": "July", "value": "07" })
-    this.Months.push({ "key": "08", "text": "August", "value": "08" })
-    this.Months.push({ "key": "09", "text": "September", "value": "09" })
-    this.Months.push({ "key": "10", "text": "October", "value": "10" })
-    this.Months.push({ "key": "11", "text": "November", "value": "11" })
-    this.Months.push({ "key": "12", "text": "December", "value": "12" })
+    this.Months.push({ "key": 0, "text": "January", "value": "01" })
+    this.Months.push({ "key": 1, "text": "February", "value": "02" })
+    this.Months.push({ "key": 2, "text": "March", "value": "03" })
+    this.Months.push({ "key": 3, "text": "April", "value": "04" })
+    this.Months.push({ "key": 4, "text": "May", "value": "05" })
+    this.Months.push({ "key": 5, "text": "June", "value": "06" })
+    this.Months.push({ "key": 6, "text": "July", "value": "07" })
+    this.Months.push({ "key": 7, "text": "August", "value": "08" })
+    this.Months.push({ "key": 8, "text": "September", "value": "09" })
+    this.Months.push({ "key": 9, "text": "October", "value": "10" })
+    this.Months.push({ "key": 10, "text": "November", "value": "11" })
+    this.Months.push({ "key": 11, "text": "December", "value": "12" })
     this.Years = [];
     this.Years.push({ "key": "2015", "text": "2015", "value": "2015" })
     this.Years.push({ "key": "2016", "text": "2016", "value": "2016" })
@@ -64,8 +64,8 @@ const Utils = (() => {
         return dateValuesArray;
     }
 
-    this.Months.get = (index) => {
-        return this.Months[index];
+    this.Months.getMonthText = (index) => {
+        return this.Months[index].text;
     }
 
     let month_iterator = [0, 1, 2, 3];

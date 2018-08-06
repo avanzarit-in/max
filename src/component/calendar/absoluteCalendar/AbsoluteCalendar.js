@@ -1,41 +1,17 @@
 import React from 'react';
 import { Grid } from 'semantic-ui-react'
-import AbsoluteCalendarBody from './AbsoluteCalendarBody'
-import AbsoluteCalendarHeader from './AbsoluteCalendarHeader'
+import AbsoluteCalendarWrapper from './AbsoluteCalendarWrapper'
+import moment from 'moment'
 
 const AbsoluteCalendar = (props) => {
-
-    console.log("AbsoluteCalendar component : render called");
+console.log("Absolute calendar rendering");
     return (
         <Grid columns={2} divided >
             <Grid.Column>
-                <Grid >
-                    <Grid.Row>
-                        <Grid.Column>
-                            <AbsoluteCalendarHeader errorFlag={props.fromDateErrorFlag}  date={props.fromDate} callback={props.setFromDateCallback} title="From" />
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <AbsoluteCalendarBody type="from-date-calendar" errorFlag={props.errorFlag} date={props.fromDate} otherDate={props.toDate}  callback={props.setFromDateCallback} />
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                <AbsoluteCalendarWrapper handleError={props.handleFromDateError} type="from-date-calendar" date={props.fromDate} otherDate={props.toDate} callback={props.fromDateHandler} />
             </Grid.Column>
             <Grid.Column>
-                <Grid >
-                    <Grid.Row>
-                        <Grid.Column>
-                            <AbsoluteCalendarHeader errorFlag={props.toDateErrorFlag}  date={props.toDate} callback={props.setToDateCallback} title="To" />
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <AbsoluteCalendarBody type="to-date-calendar" errorFlag={props.errorFlag} date={props.toDate} otherDate={props.fromDate}  callback={props.setToDateCallback}  />
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-
+                <AbsoluteCalendarWrapper handleError={props.handleToDateError} type="to-date-calendar" date={props.toDate} otherDate={props.fromDate} callback={props.toDateHandler} />
             </Grid.Column>
         </Grid>
     );

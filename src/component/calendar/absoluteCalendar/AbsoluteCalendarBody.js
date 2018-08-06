@@ -4,26 +4,28 @@ import CalendarView from './view/calendarView/CalendarView'
 import MonthsView from './view/MonthsView'
 import YearView from './view/YearView'
 import moment from 'moment'
+import Utils from './../../utils/Utils'
 
 export default class AbsoluteCalendarBody extends Component {
-    state = {
-        mode: "calendar"
-    }
+    state =
+    {
+        mode: 'calendar',
+        internalStateChange:false,
+        date: moment(),
+    };
+
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.errorFlag) {
+        if (nextProps.hasErrors) {
             return false;
         }
-        let oldDate = moment(this.props.date, ["YYYY/MM/DD"], true);
-        let newDate = moment(nextProps.date, ["YYYY/MM/DD",], true);
+        return true;
+    }
 
-        if ((this.state.mode !== nextState.mode)||
-         (newDate.isValid() && oldDate.isValid())||
-         (newDate.isValid() && !oldDate.isValid())) {
-            return true;
-        }   
-
-        return false;
+    setDate = (e, date) => {
+        console.log("date String =>" + date.format("YYYY/MM/DD"));
+        this.setState({internalStateChange:false});
+        this.props.callback(e, date);
     }
 
     changeTitle = (event, year, month) => {
@@ -32,54 +34,46 @@ export default class AbsoluteCalendarBody extends Component {
         } else if (this.state.mode === "year") {
             this.setState({ mode: "month" });
         }
-
-        this.props.callback(moment(new Date(year, month, 1)).format("YYYY/MM/DD"));
+        this.setState({ date: moment([year, month, this.state.date.get('date')]),internalStateChange:true });
     }
 
     changeMode = (e, year, month) => {
         if (this.state.mode === "calendar") {
-            this.setState({ mode: "month" })
+            this.setState({ mode: "month",internalStateChange:true })
         } else if (this.state.mode === "month") {
-            this.setState({ mode: "year" })
+            this.setState({ mode: "year",internalStateChange:true })
         }
     }
 
-    decMonth = (event, year, month) => {
-        month--;
-        if (month === 0) {
-            month = 11;
-            year--;
+    decMonth = (event, date) => {
+        if (this.state.mode === 'month') {
+            date.add(-1, 'year');
+        } else {
+            date.add(-1, 'month');
         }
-        let date = moment(new Date(year, month, 1));
-
-        this.props.callback(date.format("YYYY/MM/DD"));
+        this.setState({ date: date,internalStateChange:true });
     }
 
-    incMonth = (event, year, month) => {
-        month++;
-        if (month === 11) {
-            month = 0;
-            year++;
+    incMonth = (event, date) => {
+        if (this.state.mode === 'month') {
+            date.add(1, 'year');
+        } else {
+            date.add(1, 'month');
         }
-        let date = moment(new Date(year, month, 1));
-
-        this.props.callback(date.format("YYYY/MM/DD"));
+        this.setState({ date: date,internalStateChange:true });
     }
 
     render() {
-        console.log("AbsoluteCalendarBody component : render called ");
-        let dateFormatted = this.props.date;
-        let date = moment(dateFormatted, ["YYYY/MM/DD"], true);
-
-        let monthText = date.format('MMMM');
-        let month = date.get('month');
-        let year = date.get('year');
-        let dateValue = date.get('date')
-
-        let displayText = monthText + " " + year
-
+            console.log("AbsoluteCalendarBody component : render called "+this.state.internalStateChange);
+        let date = moment(this.props.date,["YYYY/MM/DD"],true);
+        if(this.state.internalStateChange){
+            date=this.state.date;
+        }
+console.log(date.format("YYYY/MM/DD"))
+        let displayText = Utils.Months.getMonthText(date.get('month')) + " " + date.get('year');
+            
         if (this.state.mode === "month") {
-            displayText = year
+            displayText = date.get('year')
         } else if (this.state.mode === "year") {
             displayText = "2015 - 2018"
         }
@@ -87,28 +81,27 @@ export default class AbsoluteCalendarBody extends Component {
         return (
             <div>
                 <Grid centered>
-                    <Icon name="angle left" style={{ paddingTop: '3px', marginRight: '10px', cursor: 'pointer' }} onClick={(e) => this.decMonth(e, year, month)} />
-                    <Button size="tiny" onClick={(e) => this.changeMode(e, year, month)}>
+                    <Icon name="angle left" style={{ paddingTop: '3px', marginRight: '10px', cursor: 'pointer' }} onClick={(e) => this.decMonth(e, date)} />
+                    <Button size="tiny" onClick={(e) => this.changeMode(e, date)}>
                         {displayText}
                     </Button>
-                    <Icon name="angle right" style={{ paddingTop: '3px', cursor: 'pointer' }} onClick={(e) => this.incMonth(e, year, month)} />
+                    <Icon name="angle right" style={{ paddingTop: '3px', cursor: 'pointer' }} onClick={(e) => this.incMonth(e, date)} />
                 </Grid>
 
                 {(this.state.mode === "calendar") ?
                     <CalendarView
-                        selectedYear={year}
-                        selectedMonth={month}
-                        selectedDate={dateValue}
+                        inputDate={this.props.date}
+                        date={date}
                         type={this.props.type}
                         otherDate={this.props.otherDate}
-                        callback={this.props.callback}
+                        callback={this.setDate}
                     /> :
                     (this.state.mode === "month") ?
-                        <MonthsView selectedYear={year}
+                        <MonthsView date={date}
                             changeTitle={this.changeTitle}
                         /> :
                         (this.state.mode === "year") ?
-                            <YearView selectedMonth={month} changeTitle={this.changeTitle}
+                            <YearView date={date} changeTitle={this.changeTitle}
                             /> :
                             null}
             </div>

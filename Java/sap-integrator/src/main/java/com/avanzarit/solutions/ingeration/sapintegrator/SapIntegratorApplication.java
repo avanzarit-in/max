@@ -95,7 +95,6 @@ public class SapIntegratorApplication {
                         .requestFactory(clientHttpRequestFactory)
                        .expectedResponseType(String.class))
                 .transform(this::transform)
-                .ha
                 .get();
     }
 
