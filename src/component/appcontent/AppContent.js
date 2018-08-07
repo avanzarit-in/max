@@ -11,11 +11,12 @@ export default class AppContent extends Component {
 
     constructor(props) {
         super(props);
-        this.state.data = data;
+        this.state.data ={};
     }
 
     state = {
         activeItem: '',
+        dataloaded:false,
         fromDate: moment(new Date()).format("YYYY/MM/DD"),
         toDate: moment(new Date()).format("YYYY/MM/DD"),
         broughtForwardBalance: 0,
@@ -35,6 +36,11 @@ export default class AppContent extends Component {
 
 
     componentDidMount() {
+        axios.get("http://localhost:8080/query").then(res => {
+            console.log(res.data);
+              this.setState({data:res.data,dataloaded:true});
+          })
+
         /*  console.log(this.props.location)
           let hash = this.props.location.hash;
           let token_id = hash.split("&")[0];
@@ -62,14 +68,15 @@ export default class AppContent extends Component {
 
         const { activeItem } = this.state
         return (
-            <div ref={this.handleContextRef}>
+            this.state.dataloaded?
+                <div ref={this.handleContextRef}>
 
                 <Menu borderless pointing attached="top"  >
                     <Menu.Item header position="left" >
                         <Header as="h2" size="large">Dealer Dashboard</Header>
                     </Menu.Item>
                     <Menu.Item header position="right">
-                        <Header as="h2" size="large">Brough Forward Balance : {this.state.broughtForwardBalance}</Header>
+                        <Header as="h2" size="large">Brough Forward Balance : {this.state.data["balance"]}</Header>
                     </Menu.Item>
                     <Menu.Menu position="right">
                         <Menu.Item
@@ -159,6 +166,8 @@ export default class AppContent extends Component {
                     </Table>
                 </Segment>
             </div>
+            :null
+            
 
         );
     }
