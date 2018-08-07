@@ -125,7 +125,7 @@ export default class AppContent extends Component {
                         <Table.Footer>
                             <Table.Row textAlign="right">
                                 <Table.HeaderCell colSpan='9'>
-                                   <Pagination defaultActivePage={5} totalPages={10} />
+                                   <Pagination defaultActivePage={1} totalPages={10} />
                                 </Table.HeaderCell>
                             </Table.Row>
                         </Table.Footer>
