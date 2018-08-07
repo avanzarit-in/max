@@ -5,6 +5,7 @@ import Calendar from './../calendar/Calendar';
 import Download from './../download/Download';
 import data from './../data/Data.json'
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 export default class AppContent extends Component {
 
@@ -19,7 +20,7 @@ export default class AppContent extends Component {
         toDate: moment(new Date()).format("YYYY/MM/DD"),
         broughtForwardBalance: 0,
         customerName: "Avanzar IT",
-        sapId: "1010",
+        sapId: "AP01008",
         calendarModalOpen: false,
         downloadModalOpen: false
     }
@@ -34,14 +35,25 @@ export default class AppContent extends Component {
 
 
     componentDidMount() {
-        console.log(this.props.location)
+     /*   console.log(this.props.location)
         let hash = this.props.location.hash;
         let token_id = hash.split("&")[0];
         let token = token_id.split("=")[1];
         var decoded = jwtDecode(token);
         console.log(decoded);
         console.log(decoded['cognito:username']);
-        this.setState({ customerName: decoded['cognito:username'] })
+        this.setState({ customerName: decoded['cognito:username'] })*/
+        let sapId = this.state.sapId;
+        let fromDate = this.state.fromDate;
+        let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + sapId + "'&FromDate='" + moment(fromDate,['YYYY/MM/DD'],true).format('DD.MM.YYYY') + "'&FromTime='00:00:00'&$format=json";
+        axios.get(url, {
+            auth: {
+                username: 'basis',
+                password: 'gvil@2008'
+            }
+        }).then(res => {
+            console.log(res.data);
+        })
     }
 
     render() {
@@ -49,62 +61,62 @@ export default class AppContent extends Component {
         const { activeItem } = this.state
         return (
             <div ref={this.handleContextRef}>
-               
-                    <Menu borderless pointing attached="top"  >
-                        <Menu.Item header position="left" >
-                            <Header as="h2" size="large">Dealer Dashboard</Header>
-                        </Menu.Item>
-                        <Menu.Item header position="right">
-                            <Header as="h2" size="large">Brough Forward Balance : {this.state.broughtForwardBalance}</Header>
-                        </Menu.Item>
-                        <Menu.Menu position="right">
-                            <Menu.Item
-                                name='calendar'
-                                active={activeItem === 'calendar'}>
-                                <Form.Field inline>
-                                    <Modal
-                                        style={{ height: '400px' }}
-                                        centered={false}
-                                        closeIcon
-                                        size="fullscreen"
-                                        trigger={<Button primary icon labelPosition='left' onClick={this.handleCalendarOpen}><Icon name='clock'/>{moment(this.state.fromDate, ["YYYY/MM/DD"], true).format("MMM Do YYYY") + " To " + moment(this.state.toDate, ['YYYY/MM/DD'], true).format("MMM Do YYYY")}</Button>}
-                                        open={this.state.calendarModalOpen}
-                                        onClose={this.handleCalendarClose}>
-                                        <Modal.Header>Select a Time Range to view the statement of account</Modal.Header>
-                                        <Modal.Content>
-                                            <Calendar />
-                                        </Modal.Content>
-                                    </Modal>
-                                </Form.Field>
-                            </Menu.Item>
 
-                            <Menu.Item
-                                name='download'
-                                active={activeItem === 'download'}>
+                <Menu borderless pointing attached="top"  >
+                    <Menu.Item header position="left" >
+                        <Header as="h2" size="large">Dealer Dashboard</Header>
+                    </Menu.Item>
+                    <Menu.Item header position="right">
+                        <Header as="h2" size="large">Brough Forward Balance : {this.state.broughtForwardBalance}</Header>
+                    </Menu.Item>
+                    <Menu.Menu position="right">
+                        <Menu.Item
+                            name='calendar'
+                            active={activeItem === 'calendar'}>
+                            <Form.Field inline>
                                 <Modal
+                                    style={{ height: '400px' }}
                                     centered={false}
                                     closeIcon
-                                    size="mini"
-                                    trigger={<Button icon labelPosition='left' onClick={this.handleDownloadOpen}> <Icon name='download'/>Download</Button>}
-                                    open={this.state.downloadModalOpen}
-                                    onClose={this.handleDownloadClose}>
-                                    <Modal.Header>Download Statement</Modal.Header>
+                                    size="fullscreen"
+                                    trigger={<Button primary icon labelPosition='left' onClick={this.handleCalendarOpen}><Icon name='clock' />{moment(this.state.fromDate, ["YYYY/MM/DD"], true).format("MMM Do YYYY") + " To " + moment(this.state.toDate, ['YYYY/MM/DD'], true).format("MMM Do YYYY")}</Button>}
+                                    open={this.state.calendarModalOpen}
+                                    onClose={this.handleCalendarClose}>
+                                    <Modal.Header>Select a Time Range to view the statement of account</Modal.Header>
                                     <Modal.Content>
-                                        <Download />
+                                        <Calendar />
                                     </Modal.Content>
-                                 </Modal>
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu>
+                                </Modal>
+                            </Form.Field>
+                        </Menu.Item>
 
-                    <Segment attached >
-                        <Header
-                            as='h4'
-                            content={'Customer Name: ' + this.state.customerName}
-                            subheader={'SAP Customer Id : ' + this.state.sapId}
-                        />
-                    </Segment>
-             
+                        <Menu.Item
+                            name='download'
+                            active={activeItem === 'download'}>
+                            <Modal
+                                centered={false}
+                                closeIcon
+                                size="mini"
+                                trigger={<Button icon labelPosition='left' onClick={this.handleDownloadOpen}> <Icon name='download' />Download</Button>}
+                                open={this.state.downloadModalOpen}
+                                onClose={this.handleDownloadClose}>
+                                <Modal.Header>Download Statement</Modal.Header>
+                                <Modal.Content>
+                                    <Download />
+                                </Modal.Content>
+                            </Modal>
+                        </Menu.Item>
+                    </Menu.Menu>
+                </Menu>
+
+                <Segment attached >
+                    <Header
+                        as='h4'
+                        content={'Customer Name: ' + this.state.customerName}
+                        subheader={'SAP Customer Id : ' + this.state.sapId}
+                    />
+                </Segment>
+
 
                 <Segment attached="bottom" basic >
                     <Table striped fixed singleLine celled>
@@ -138,7 +150,7 @@ export default class AppContent extends Component {
                         <Table.Footer>
                             <Table.Row textAlign="right">
                                 <Table.HeaderCell colSpan='9'>
-                                   <Pagination defaultActivePage={1} totalPages={10} />
+                                    <Pagination defaultActivePage={1} totalPages={10} />
                                 </Table.HeaderCell>
                             </Table.Row>
                         </Table.Footer>
