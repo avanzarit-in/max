@@ -35,25 +35,27 @@ export default class AppContent extends Component {
 
 
     componentDidMount() {
-     /*   console.log(this.props.location)
-        let hash = this.props.location.hash;
-        let token_id = hash.split("&")[0];
-        let token = token_id.split("=")[1];
-        var decoded = jwtDecode(token);
-        console.log(decoded);
-        console.log(decoded['cognito:username']);
-        this.setState({ customerName: decoded['cognito:username'] })*/
-        let sapId = this.state.sapId;
-        let fromDate = this.state.fromDate;
-        let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + sapId + "'&FromDate='" + moment(fromDate,['YYYY/MM/DD'],true).format('DD.MM.YYYY') + "'&FromTime='00:00:00'&$format=json";
-        axios.get(url, {
-            auth: {
-                username: 'basis',
-                password: 'gvil@2008'
-            }
-        }).then(res => {
-            console.log(res.data);
-        })
+        /*  console.log(this.props.location)
+          let hash = this.props.location.hash;
+          let token_id = hash.split("&")[0];
+          let token = token_id.split("=")[1];
+          var decoded = jwtDecode(token);
+          console.log(decoded);
+          console.log(decoded['cognito:username']);
+          this.setState({ sapId: decoded['cognito:username'] });
+          let sapId = decoded['cognito:username'];
+
+          let fromDate = moment(this.state.fromDate, ['YYYY/MM/DD'], true).format('DD.MM.YYYY');
+          let url = "https://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + sapId + "'&FromDate='" + fromDate + "'&FromTime='00:00:00'&$format=json";
+          console.log(url);
+          axios.get(url, {
+              auth: {
+                  username: 'basis',
+                  password: 'gvil@2008'
+              }
+          }).then(res => {
+              console.log(res.data);
+          })*/
     }
 
     render() {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import LeftNav from './component/LeftNav';
 import AppContent from './component/appcontent/AppContent'
+import Report from './component/download/Report'
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { Route } from 'react-router';
@@ -15,6 +16,7 @@ class App extends Component {
         </div>
         <div style={{ marginLeft: '50px' }}>
         <Route path="/" component={AppContent} />
+         <Route path="/download" component={Report} />
 
         </div>
       </div>

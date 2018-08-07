@@ -1,15 +1,10 @@
-const express = require('express');
-const path = require('path');
 const puppeteer = require('puppeteer');
-const app = express();
-app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/download', function(req, res) {
-    console.log("downloader Called");
+const Downloader = function() {
     puppeteer.launch().then(function(browser) {
 
         browser.newPage().then(function(page) {
-            page.goto('https://google.com').then(function() {
+            page.goto('http://127.0.0.1:5500/mypage.html').then(function() {
 
                 page.pdf({
                     path: 'hn.pdf',
@@ -27,15 +22,7 @@ app.get('/download', function(req, res) {
         }, function(error) {
 
         })
-    }, function(data) { console.log(data) });
+    }, function() {});
+}
 
-    res.send("Download Done");
-
-});
-
-app.get('/login', function(req, res) {
-    console.log(req.params);
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
-app.listen(process.env.PORT || 8080, () => console.log("Server started on port 8080"));
+module.export.Downloader = Downloader
