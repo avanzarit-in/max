@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Menu, Segment, Header, Button, Icon, Label, Form, Table, Sticky, Visibility, Modal, Popup,Pagination } from 'semantic-ui-react';
+import { Menu, Segment, Header, Button, Icon, Label, Form, Table, Sticky, Visibility, Modal, Popup, Pagination } from 'semantic-ui-react';
 import moment from 'moment'
 import Calendar from './../calendar/Calendar';
 import Download from './../download/Download';
 import data from './../data/Data.json'
+import jwtDecode from 'jwt-decode';
 
 export default class AppContent extends Component {
 
@@ -32,7 +33,19 @@ export default class AppContent extends Component {
     handleDownloadClose = () => this.setState({ downloadModalOpen: false })
 
 
+    componentDidMount() {
+        console.log(this.props.location)
+        let hash = this.props.location.hash;
+        let token_id = hash.split("&")[0];
+        let token = token_id.split("=")[1];
+        var decoded = jwtDecode(token);
+        console.log(decoded);
+        console.log(decoded['cognito:username']);
+        this.setState({ customerName: decoded['cognito:username'] })
+    }
+
     render() {
+
         const { activeItem } = this.state
         return (
             <div ref={this.handleContextRef}>
