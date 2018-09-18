@@ -4,7 +4,8 @@ import moment from 'moment'
 const Footer = (props) => {
     let fromDate = moment(props.fromDate, ["YYYY/MM/DD"], true)
     let toDate = moment(props.toDate, ["YYYY/MM/DD"], true)
-
+console.log("fromDate ===>"+fromDate)
+console.log("toDate ===>"+toDate)
 
     return (
         <Grid columns={16} >

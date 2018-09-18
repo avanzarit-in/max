@@ -56,10 +56,10 @@ export default class Calendar extends Component {
                         onClick={this.handleItemClick} >
                         Quick
             </Menu.Item>
-                    <Menu.Item as="a" name='relative' active={this.state.activeItem === 'relative'}
+                {/**    <Menu.Item as="a" name='relative' active={this.state.activeItem === 'relative'}
                         onClick={this.handleItemClick}>
                         Relative
-            </Menu.Item>
+            </Menu.Item> **/}
                     <Menu.Item as="a" name='absolute' active={this.state.activeItem === 'absolute'}
                         onClick={this.handleItemClick}>
                         Absolute
@@ -75,7 +75,7 @@ export default class Calendar extends Component {
                                 null
                 }
                 <Segment attached="bottom">
-                    <Footer hasErrors={this.state.fromDateHasErrors||this.state.toDateHasErrors} />
+                    <Footer {...this.state} hasErrors={this.state.fromDateHasErrors||this.state.toDateHasErrors} />
                 </Segment>
             </div>
         );
