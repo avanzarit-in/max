@@ -7,8 +7,11 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
+import org.springframework.util.FileCopyUtils;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,21 +24,26 @@ import java.util.Map;
 @Component
 @Path("/report")
 public class GenerateReportComponent {
+
     @GET
     @Path("/world")
-    public Response test() throws JRException, FileNotFoundException {
+    public Response test() throws JRException, IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("TEST_FILTER_PARAM", "A");
 
-        File sourceFile = ResourceUtils.getFile("classpath:Statement.jasper");
-       //   File sourceFile = new File("Statement.jasper");
-        JasperReport jasperReport = (JasperReport) JRLoader.loadObject(sourceFile);
+        ClassPathResource cpr = new ClassPathResource("Statement.jasper");
+
+        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+        ByteArrayInputStream bais = new ByteArrayInputStream(bdata);
+
+
+        JasperReport jasperReport = (JasperReport) JRLoader.loadObject(bais);
         System.out.println(jasperReport);
 
         JasperPrint jr = JasperFillManager.fillReport(jasperReport, params,
                 new CustomerDataSourceImpl());
         JRXlsExporter xlsExporter = new JRXlsExporter();
-        ByteArrayOutputStream outputStream=new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         xlsExporter.setExporterInput(new SimpleExporterInput(jr));
         xlsExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
         SimpleXlsReportConfiguration xlsReportConfiguration = new SimpleXlsReportConfiguration();
@@ -47,11 +55,9 @@ public class GenerateReportComponent {
         xlsExporter.setConfiguration(xlsReportConfiguration);
         xlsExporter.exportReport();
 
-     //   JasperExportManager.exportReportToPdfStream(jr, outputStream);
         return Response
                 .ok(outputStream.toByteArray(), MediaType.APPLICATION_OCTET_STREAM)
-                .header("content-disposition","attachment; filename = test.xls")
+                .header("content-disposition", "attachment; filename = test.xls")
                 .build();
-
     }
 }
