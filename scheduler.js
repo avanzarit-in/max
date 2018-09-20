@@ -23,6 +23,11 @@ app.use('customer', service({
     Model: customerDB
 }));
 
+const formatTime = (timeInText) => {
+    timeInText = timeInText.replace(/^PT/, '').replace(/S$/, '');
+    timeInText = timeInText.replace('H', ':').replace('M', ':');
+    return timeInText;
+}
 
 
 app.service('customer').find().then(items => {
@@ -71,23 +76,25 @@ app.service('customer').find().then(items => {
 
                 result["balance"] = response.data.d.results[0]["CarryForwardBalance"];
                 response.data.d.results.map(function(item, index) {
-                    if (index > 0) {
+                    var dateTime = moment(item["DocumentDate"] + " " + formatTime(item["EntryTime"]), "YYYYMMDD HH:mm:ss", true).toDate();
+                    if (moment(dateTime).isValid()) {
                         let obj = {}
                         obj["R"] = item["Reference"];
                         obj["CD"] = item["ClearingDocumentNo"];
-                        obj["DD"] = moment(item["DocumentDate"], 'YYYYMMDD', true).toDate();
-                        obj["DDT"] = item["DocumentDate"];
+                        obj["DD"] = dateTime;
+                        obj["DDT"] = moment(obj["DD"]).format("DD/MM/YYYY");
                         obj["P"] = item["Particulars"];
                         obj["Q"] = item["Quantity"];
                         obj["D"] = item["Debit"];
                         obj["C"] = item["Credit"];
                         obj["CB"] = item["CumulativeBalance"];
-                        obj["R"] = item["Remarks"];
+                        obj["RM"] = item["Remarks"];
 
                         app.service(customerId).create(obj);
 
                         result["payload"][index - 1] = obj;
                     }
+
                 })
                 console.log(customerId + "=>" + result["payload"].length + "=>" + result["balance"]);
 

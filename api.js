@@ -65,9 +65,39 @@ app.use('customer', service({
     Model: customerDB
 }));
 
+app.get('/api/customer', (req, res) => {
+    let customerId = req.query.customerId;
+    console.log("Fetch Custoer data for =>" + customerId);
+
+    var promise = new Promise((resolve, reject) => {
+        app.service('customer').get(customerId).then(customer => {
+            resolve(customer)
+
+        }).catch(error => {
+            reject(error);
+        });
+    });
+
+    promise.then(data => {
+
+
+        res.send(data);
+    }, err => {
+        res.sendStatus(404);
+    })
+
+})
+
+const formatTime = (timeInText) => {
+    timeInText = timeInText.replace(/^PT/, '').replace(/S$/, '');
+    timeInText = timeInText.replace('H', ':').replace('M', ':');
+    return timeInText;
+}
+
 
 app.get('/api/statement', function(req, res) {
     let result = [];
+    let reportType = req.query.reportType;
     let customerId = req.query.customerId;
     let fromDateFormatted = req.query.fromDate;
     let toDateFormatted = req.query.toDate;
@@ -99,13 +129,17 @@ app.get('/api/statement', function(req, res) {
             Model: statementDB
         }));
 
-        app.service('/api/' + customerId).find({
-            query: {
+        let query = "";
+        if (reportType === "summary") {
+            query = {
                 $and: [{
                         "DD": { $gte: moment(fromDateFormatted, "DD.MM.YYYY", true).toDate() }
                     },
                     {
                         "DD": { $lte: moment(toDateFormatted, "DD.MM.YYYY", true).toDate() }
+                    },
+                    {
+                        "CD": ""
                     }
 
                 ],
@@ -113,6 +147,25 @@ app.get('/api/statement', function(req, res) {
                     DD: 1
                 }
             }
+
+        }
+        else if (reportType === "detail") {
+            query = {
+                $and: [{
+                        "DD": { $gte: moment(fromDateFormatted, "DD.MM.YYYY", true).toDate() }
+                    },
+                    {
+                        "DD": { $lte: moment(toDateFormatted, "DD.MM.YYYY", true).toDate() }
+                    }
+                ],
+                $sort: {
+                    DD: 1
+                }
+            }
+        }
+
+        app.service('/api/' + customerId).find({
+            query: query
         }).then(items => {
             items.forEach(item => {
                 result.push(item);
@@ -131,18 +184,20 @@ app.get('/api/statement', function(req, res) {
                     if (response !== undefined && response.data !== undefined && response.data.d !== undefined && response.data.d.results !== undefined && response.data.d.results[0] !== undefined) {
 
                         response.data.d.results.map(function(item, index) {
-                            if (index > 0) {
+                            var dateTime = moment(item["DocumentDate"] + " " + formatTime(item["EntryTime"]), "YYYYMMDD HH:mm:ss", true).toDate();
+                            if (moment(dateTime).isValid()) {
                                 let obj = {}
                                 obj["R"] = item["Reference"];
                                 obj["CD"] = item["ClearingDocumentNo"];
-                                obj["DD"] = moment(item["DocumentDate"], 'YYYYMMDD', true).toDate();
-                                obj["DDT"] = item["DocumentDate"];
+                                obj["DD"] = dateTime;
+                                obj["DDT"] = moment(obj["DD"]).format("DD/MM/YYYY");
+                                obj["TTT"] = item["EntryTime"];
                                 obj["P"] = item["Particulars"];
                                 obj["Q"] = item["Quantity"];
                                 obj["D"] = item["Debit"];
                                 obj["C"] = item["Credit"];
                                 obj["CB"] = item["CumulativeBalance"];
-                                obj["R"] = item["Remarks"];
+                                obj["RM"] = item["Remarks"];
 
                                 result.push(obj);
                             }
@@ -172,15 +227,12 @@ app.get('/api/statement', function(req, res) {
                 res.send(result);
             }
         })
+    }).catch(error => {
+        res.sendStatus(404);
     })
 });
 
-
-
-
-
 // Set up an error handler that gives us nicer errors
 app.use(express.errorHandler());
-
 
 app.listen(3030);
