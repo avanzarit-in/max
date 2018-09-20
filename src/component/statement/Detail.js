@@ -7,6 +7,7 @@ import data from './../data/Data.json'
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import NumberFormat from 'react-number-format';
+import numeral from 'numeral'
 
 const pageSizeOptions = [
     {
@@ -31,11 +32,11 @@ export default class Detail extends Component {
         this.state = {
             activeItem: '',
             dataloaded: false,
-            fromDate: moment([2017,0,1]),
+            fromDate: moment([2017, 3, 1]),
             toDate: moment(),
             broughtForwardBalance: 0,
-            customerName: "T.T.AGENCY",
-            sapId: "AP01008",
+            customerName: "",
+            sapId: "",
             calendarModalOpen: false,
             downloadModalOpen: false,
             pageSize: 20,
@@ -44,8 +45,6 @@ export default class Detail extends Component {
             paymentDue: 0,
             paymentReceived: 0
         }
-
-
     }
 
 
@@ -57,8 +56,8 @@ export default class Detail extends Component {
 
     handleDownloadClose = () => this.setState({ downloadModalOpen: false })
 
-    onDateChange = (fromDate,toDate) =>{
-        this.setState({fromDate:fromDate,toDate:toDate});
+    onDateChange = (fromDate, toDate) => {
+        this.setState({ fromDate: fromDate, toDate: toDate });
     }
 
     onPageChange = (e, { activePage }) => {
@@ -77,82 +76,130 @@ export default class Detail extends Component {
         })
     }
 
-    updateStateWithData = (data) => {
+    updateStateWithData = (userDisplayName, data) => {
 
         let paymentDue = 0;
         let paymentReceived = 0;
-        data.payload.forEach(item => {
-            paymentDue = paymentDue + parseInt(item[5]);
-            paymentReceived = paymentReceived + parseInt(item[6]);
+        let broughtForwardBalance = 0;
+        data.forEach((item, index) => {
+            if (index === 0) {
+                let debit = parseInt(item.D);
+                let credit = parseInt(item.C);
+                let cumelativeBalance = parseInt(item.CB);
+                if (debit === 0 && credit !== 0) {
+                    broughtForwardBalance = cumelativeBalance + credit;
+                } else if (credit === 0 && debit !== 0) {
+                    broughtForwardBalance = cumelativeBalance - debit;
+                }
+            }
+            paymentDue = paymentDue + parseInt(item.D);
+            paymentReceived = paymentReceived + parseInt(item.C);
+
         })
 
-        this.setState({ data: data, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
+        this.setState({ broughtForwardBalance: broughtForwardBalance, customerName: userDisplayName, sapId: this.props.username, data: { payload: data }, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
 
     }
 
     componentDidMount() {
         //  this.setState({data:data});
-        let fromDate=this.state.fromDate.format('DD.MM.YYYY');
-        let toDate=this.state.toDate.format('DD.MM.YYYY');
+        let fromDate = this.state.fromDate.format('DD.MM.YYYY');
+        let toDate = this.state.toDate.format('DD.MM.YYYY');
         console.log("component did mount called");
         let statementData = "";
-        axios.get("http://localhost:8080/query",
-        {params: {
-      custId: this.state.sapId,
-      fromDate:fromDate,
-      toDate:toDate
-    }}).then(res => {
-            statementData = res.data;
-            this.updateStateWithData(statementData);
-        }).catch((error) => {
-            // Error
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                 console.log(error.response.data);
-                 console.log(error.response.status);
-                 console.log(error.response.headers);
-            } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                //console.log(error.request);
-                console.log("No response Received from the Server");
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-            statementData = { ...data };
-            console.log(statementData);
-            this.updateStateWithData(statementData)
-            console.log(error.config);
-        });
+        console.log(this.props.username);
+        axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/customer', {
+            params: {
+                customerId: this.props.username
+            },
+        }, {
+                headers: {
+                    "x-api-key": "opensesame",
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                console.log(res);
+                let userDisplayName = res.data.name;
 
+
+                axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/statement', {
+                    params: {
+                        customerId: this.props.username,
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        reportType:"detail"
+
+                    },
+
+                }, {
+                        headers: {
+                            "x-api-key": "opensesame",
+                            "Content-Type": "application/json"
+                        }
+                    }).then(res => {
+                        console.log(res);
+                        statementData = res.data;
+                        this.updateStateWithData(userDisplayName, statementData)
+
+                    }).catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data);
+                            console.log(error.response.status);
+                            console.log(error.response.headers);
+                        } else if (error.request) {
+                            console.log(error.request);
+                        } else {
+                            console.log('Error', error.message);
+                        }
+                        statementData = { ...data };
+                        console.log(statementData);
+                        this.updateStateWithData(userDisplayName, statementData)
+                        console.log(error.config);
+                    });
+
+            }).catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                statementData = { ...data };
+                console.log(statementData);
+                this.updateStateWithData(this.props.username, statementData)
+                console.log(error.config);
+            });
 
     }
 
     render() {
-
         const { activeItem } = this.state
         let { pageSize, data } = this.state;
         let startIndex = (this.state.activePage - 1) * this.state.pageSize;
         let endIndex = startIndex + pageSize - 1;
         console.log("Indexes =>", startIndex + " " + endIndex);
-        let netOutstanding = parseInt(this.state.paymentDue) - parseInt(this.state.paymentReceived) + parseInt(this.state.data["balance"]);
+        let netOutstanding = parseInt(this.state.paymentDue) - parseInt(this.state.paymentReceived) + parseInt(this.state.broughtForwardBalance);
 
         return (
             this.state.dataloaded ?
                 <div >
 
                     <Menu borderless pointing attached="top"  >
-                      
+
                         <Menu.Item header >
-                            <Header as="h3" >Brough Forward Balance : {this.state.data["balance"]}</Header>
+                            <Header as="h3" >Brough Forward Balance : {numeral(this.state.broughtForwardBalance).format('(0,0.00)')}</Header>
                         </Menu.Item>
                         <Menu.Menu position="right">
+                             {data.payload.length > 0 ?
+                            <Menu.Item>
+                                <Pagination activePage={this.state.activePage} totalPages={Math.ceil(data.payload.length / this.state.pageSize)} onPageChange={this.onPageChange} />
+                                </Menu.Item>:null}
                             <Menu.Item>
                                 <span>
                                     Page Size {' '}
@@ -212,21 +259,21 @@ export default class Detail extends Component {
                             <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Payment Received: ' + this.state.paymentReceived}
+                                    content={'Payment Received: ' + numeral(this.state.paymentReceived).format('(0,0.00)')}
                                     subheader={' '}
                                 /></Segment>
                             </Grid.Column>
                             <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Payment Due: ' + this.state.paymentDue}
+                                    content={'Payment Due: ' + numeral(this.state.paymentDue).format('(0,0.00)')}
 
                                 /></Segment>
                             </Grid.Column>
                             <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Total Outstanding: ' + netOutstanding}
+                                    content={'Total Outstanding: ' + numeral(netOutstanding).format('(0,0.00)')}
 
                                 /></Segment>
                             </Grid.Column>
@@ -236,11 +283,10 @@ export default class Detail extends Component {
 
 
                     <Segment attached="bottom" basic >
-                        <Table striped fixed singleLine celled>
+                        <Table striped fixed singleLine celled textAlign="center">
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Doc. Ref</Table.HeaderCell>
-                                    <Table.HeaderCell>Clearing Document No</Table.HeaderCell>
                                     <Table.HeaderCell>Date</Table.HeaderCell>
                                     <Table.HeaderCell>Perticulars</Table.HeaderCell>
                                     <Table.HeaderCell>Quantity</Table.HeaderCell>
@@ -260,26 +306,21 @@ export default class Detail extends Component {
 
                                 }).map((item, counter) => {
                                     return (<Table.Row key={counter}>
-                                        {item.map((item, index) => {
-                                            return (<Table.Cell title={[
-                                                item
-                                            ].join(' ')} key={index}>{item}</Table.Cell>)
-                                        })}
+                                        <Table.Cell title={[item.R].join(' ')} textAlign="left">{item.R}</Table.Cell>
+                                        <Table.Cell title={[item.DDT].join(' ')}>{item.DDT}</Table.Cell>
+                                        <Table.Cell title={[item.P].join(' ')} textAlign="left">{item.P}</Table.Cell>
+                                        <Table.Cell title={[item.Q].join(' ')}>{item.Q}</Table.Cell>
+                                        <Table.Cell title={[item.D].join(' ')}>{numeral(item.D).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.C].join(' ')}>{numeral(item.C).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.CB].join(' ')}>{numeral(item.CB).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.RM].join(' ')} textAlign="left">{item.RM}</Table.Cell>
+
                                     </Table.Row>
                                     );
                                 })}
 
                             </Table.Body>
-                            <Table.Footer fullWidth>
-                                {data.payload.length > 0 ?
-                                    <Table.Row textAlign="right">
-
-                                        <Table.HeaderCell colSpan='9'>
-                                            <Pagination activePage={this.state.activePage} totalPages={Math.ceil(data.payload.length / this.state.pageSize)} onPageChange={this.onPageChange} />
-                                        </Table.HeaderCell>
-                                    </Table.Row> : null
-                                }
-                            </Table.Footer>
+                           
                         </Table>
                     </Segment>
                 </div>

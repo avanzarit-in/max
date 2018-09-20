@@ -8,6 +8,7 @@ import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
+import numeral from 'numeral'
 
 const pageSizeOptions = [
     {
@@ -36,11 +37,11 @@ export default class AppContent extends Component {
     state = {
         activeItem: '',
         dataloaded: false,
-        fromDate:  moment([2017, 0, 1]),
+        fromDate: moment([2017, 0, 1]),
         toDate: moment(),
         broughtForwardBalance: 0,
-        customerName: "Avanzar IT",
-        sapId: "AP01008",
+        customerName: "",
+        sapId: "",
         calendarModalOpen: false,
         downloadModalOpen: false,
         pageSize: 20,
@@ -74,57 +75,106 @@ export default class AppContent extends Component {
         })
     }
 
-    updateStateWithData = (data) => {
+    updateStateWithData = (userDisplayName, data) => {
         let paymentDue = 0;
         let paymentReceived = 0;
-        let payload = data.payload.filter(item => {
-            if (item[1] === undefined || item[1] === "") {
-                paymentDue = paymentDue + parseInt(item[5]);
-                paymentReceived = paymentReceived + parseInt(item[6]);
+        let payload = data.filter(item => {
+            if (item.CD === undefined || item.CD === "") {
+                paymentDue = paymentDue + parseInt(item.D);
+                paymentReceived = paymentReceived + parseInt(item.C);
                 return true;
 
             }
             return false;
         })
 
-        this.setState({ data: { payload: payload }, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
+        this.setState({ customerName: userDisplayName, sapId: this.props.username, data: { payload: payload }, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
     }
 
     componentDidMount() {
-   let fromDate=this.state.fromDate.format('DD.MM.YYYY');
-        let toDate=this.state.toDate.format('DD.MM.YYYY');
+        let fromDate = this.state.fromDate.format('DD.MM.YYYY');
+        let toDate = this.state.toDate.format('DD.MM.YYYY');
         console.log("component did mount called");
         let statementData = "";
-        axios.get("http://localhost:8080/query",{params: {
-      custId: this.state.sapId,
-      fromDate:fromDate,
-      toDate:toDate
-    }}).then(res => {
-            statementData = res.data;
-            this.updateStateWithData(statementData)
+        console.log(this.props.username);
+        axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/customer', {
+            params: {
+                customerId: this.props.username
+            },
+        }, {
+                headers: {
+                    "x-api-key": "opensesame",
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                console.log(res);
+                let userDisplayName = res.data.name;
 
-        }).catch((error) => {
-            // Error
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                // console.log(error.response.data);
-                // console.log(error.response.status);
-                // console.log(error.response.headers);
-            } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-            statementData = { ...data };
-            console.log(statementData);
-            this.updateStateWithData(statementData)
-            console.log(error.config);
-        });
+
+                axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/statement', {
+                    params: {
+                        customerId: this.props.username,
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        reportType:"summary"
+
+                    },
+
+                }, {
+                        headers: {
+                            "x-api-key": "opensesame",
+                            "Content-Type": "application/json"
+                        }
+                    }).then(res => {
+                        console.log(res);
+                        statementData = res.data;
+                        this.updateStateWithData(userDisplayName, statementData)
+
+                    }).catch((error) => {
+                        // Error
+                        if (error.response) {
+                            // The request was made and the server responded with a status code
+                            // that falls out of the range of 2xx
+                            // console.log(error.response.data);
+                            // console.log(error.response.status);
+                            // console.log(error.response.headers);
+                        } else if (error.request) {
+                            // The request was made but no response was received
+                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                            // http.ClientRequest in node.js
+                            console.log(error.request);
+                        } else {
+                            // Something happened in setting up the request that triggered an Error
+                            console.log('Error', error.message);
+                        }
+                        statementData = { ...data };
+                        console.log(statementData);
+                        this.updateStateWithData(userDisplayName, statementData)
+                        console.log(error.config);
+                    });
+
+            }).catch((error) => {
+                // Error
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    // console.log(error.response.data);
+                    // console.log(error.response.status);
+                    // console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                    // http.ClientRequest in node.js
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+                statementData = { ...data };
+                console.log(statementData);
+                this.updateStateWithData(this.props.username, statementData)
+                console.log(error.config);
+            });
     }
 
     render() {
@@ -141,7 +191,14 @@ export default class AppContent extends Component {
                 <div ref={this.handleContextRef}>
 
                     <Menu borderless pointing attached="top"  >
-                         <Menu.Menu position="right">
+                        <Menu.Item>
+                            <Segment basic>  <Header
+                                as='h3'
+                                content={'Customer Name: ' + this.state.customerName}
+                                subheader={'SAP Customer Id : ' + this.state.sapId}
+                            /></Segment>
+                        </Menu.Item>
+                        <Menu.Menu position="right">
                             <Menu.Item>
                                 <span>
                                     Page Size {' '}
@@ -168,31 +225,24 @@ export default class AppContent extends Component {
 
                     <Segment attached >
                         <Grid columns='equal'>
-                            <Grid.Column>
-                                <Segment basic>  <Header
-                                    as='h3'
-                                    content={'Customer Name: ' + this.state.customerName}
-                                    subheader={'SAP Customer Id : ' + this.state.sapId}
-                                /></Segment>
-                            </Grid.Column>
-                            <Grid.Column>
+                           <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Payment Received: ' + this.state.paymentReceived}
+                                    content={'Payment Received: ' + numeral(this.state.paymentReceived).format('(0,0.00)')}
                                     subheader={' '}
                                 /></Segment>
                             </Grid.Column>
                             <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Payment Due: ' + this.state.paymentDue}
+                                    content={'Payment Due: ' + numeral(this.state.paymentDue).format('(0,0.00)')}
 
                                 /></Segment>
                             </Grid.Column>
                             <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
-                                    content={'Total Outstanding: ' + netOutstanding}
+                                    content={'Total Outstanding: ' + numeral(netOutstanding).format('(0,0.00)')}
 
                                 /></Segment>
                             </Grid.Column>
@@ -201,7 +251,7 @@ export default class AppContent extends Component {
 
 
                     <Segment attached="bottom" basic >
-                        <Table striped fixed singleLine celled>
+                        <Table striped fixed singleLine celled textAlign="center">
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Doc. Ref</Table.HeaderCell>
@@ -211,7 +261,7 @@ export default class AppContent extends Component {
                                     <Table.HeaderCell>Debit</Table.HeaderCell>
                                     <Table.HeaderCell>Credit</Table.HeaderCell>
                                     <Table.HeaderCell>Cum. Balance</Table.HeaderCell>
-
+                                    <Table.HeaderCell>Remarks</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
 
@@ -224,13 +274,14 @@ export default class AppContent extends Component {
 
                                 }).map((item, counter) => {
                                     return (<Table.Row key={counter}>
-                                        {item.map((item, index) => {
-                                            if (index !== 1 && index !== 8) {
-                                                return (<Table.Cell title={[
-                                                    item
-                                                ].join(' ')} key={index}>{item}</Table.Cell>)
-                                            }
-                                        })}
+                                        <Table.Cell title={[item.R].join(' ')}>{item.R}</Table.Cell>
+                                        <Table.Cell title={[item.DDT].join(' ')}>{item.DDT}</Table.Cell>
+                                        <Table.Cell title={[item.P].join(' ')}>{item.P}</Table.Cell>
+                                        <Table.Cell title={[item.Q].join(' ')}>{item.Q}</Table.Cell>
+                                        <Table.Cell title={[item.D].join(' ')}>{numeral(item.D).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.C].join(' ')}>{numeral(item.C).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.CB].join(' ')}>{numeral(item.CB).format('(0,0.00)')}</Table.Cell>
+                                        <Table.Cell title={[item.RM].join(' ')}>{item.RM}</Table.Cell>
 
                                     </Table.Row>
                                     );

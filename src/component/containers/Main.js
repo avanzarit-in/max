@@ -50,11 +50,7 @@ export default class Main extends Component {
         let locationPathNames = this.props.location.pathname.split("/")
         console.log(locationPathNames);
 
-
-
         let action = locationPathNames[1];
-
-
 
         return (
             <div style={{ height: '100%' }}>
@@ -146,9 +142,9 @@ export default class Main extends Component {
                     <Sidebar.Pusher style={{ height: '100%' }}>
                         <Segment padded style={{ height: '100%', paddingTop: '50px',overflow:'scroll' }} attached="bottom" >
 
-                            <Route exact path='/' render={(props) => <Landing {...props} />} />
-                            <Route exact path={`/summary`} render={(props) => <Summary {...props} />} />
-                            <Route exact path={`/statement`} render={(props) => <Detail {...props} />} />
+                            <Route exact path='/' render={(props) => <Landing {...this.props} />} />
+                            <Route exact path={`/summary`} render={(props) => <Summary {...this.props} />} />
+                            <Route exact path={`/statement`} render={(props) => <Detail {...this.props} />} />
                         </Segment>
                     </Sidebar.Pusher>
                 </Sidebar.Pushable>

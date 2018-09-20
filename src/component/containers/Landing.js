@@ -13,6 +13,7 @@ export default class Landing extends Component {
 
     return (
       <Card.Group itemsPerRow={2} style={{ marginTop: '100px', marginLeft: '200px', marginRight: '200px' }}>
+        {/**
         <Card>
           <Card.Content >
             <Card.Header>Payments</Card.Header>
@@ -66,7 +67,7 @@ export default class Landing extends Component {
             </Button>
           </Card.Content>
         </Card>
-
+**/}
         <Card>
           <Card.Content >
             <Card.Header>Unsettled Transactions</Card.Header>
