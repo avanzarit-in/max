@@ -206,7 +206,7 @@ export default class Detail extends Component {
                                 </Form.Field>
                             </Menu.Item>
 
-                            <Menu.Item
+                         {/**   <Menu.Item
                                 name='download'
                                 active={activeItem === 'download'}>
                                 <Modal
@@ -221,7 +221,7 @@ export default class Detail extends Component {
                                         <Download />
                                     </Modal.Content>
                                 </Modal>
-                            </Menu.Item>
+                            </Menu.Item> **/}
                         </Menu.Menu>
                     </Menu>
 
