@@ -70,11 +70,16 @@ export default class Landing extends Component {
 **/}
         <Card>
           <Card.Content >
-            <Card.Header>Unsettled Transactions</Card.Header>
+            <Card.Header>Statement Summary</Card.Header>
             <Card.Meta>
               <span className='date'>As on:{today}</span>
             </Card.Meta>
             <Card.Description style={{ marginTop: '20px' }}>
+            <Grid columns={1}>
+             <Grid.Column textAlign="left">
+                    Unsettled Transactions Summary Report
+                  </Grid.Column>
+            </Grid>
               <Grid columns={2}>
                 <Grid.Row style={{ paddingBottom: '0px' }}>
                   <Grid.Column textAlign="right">
@@ -110,7 +115,7 @@ export default class Landing extends Component {
           </Card.Content>
         </Card>
 
-        <Card>
+       {/** <Card>
           <Card.Content >
             <Card.Header>Detailed Statement</Card.Header>
             <Card.Meta>
@@ -158,7 +163,7 @@ export default class Landing extends Component {
             <Link style={{ color: 'white' }} to={`/statement`}>View Details</Link>
             </Button>
           </Card.Content>
-        </Card>
+        </Card> **/}
       </Card.Group>
     );
   }

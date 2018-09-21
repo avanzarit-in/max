@@ -10,8 +10,7 @@ import NumberFormat from 'react-number-format';
 import numeral from 'numeral';
 import Api from './../utils/Api'
 
-const pageSizeOptions = [
-    {
+const pageSizeOptions = [{
         text: '20',
         value: 20
     },
@@ -65,16 +64,17 @@ export default class Detail extends Component {
         Api.fetchStatementData(this.props.username, "detail", formattedFromDate, formattedToDate).then(statementData => {
             console.log(statementData);
             let result = this.calculateAmounts(statementData);
-            this.setState(
-                {
-                    fromDate: fromDate,
-                    toDate: toDate,
-                    broughtForwardBalance: result.broughtForwardBalance,
-                    data: { payload: statementData },
-                    dataloaded: true,
-                    paymentDue: result.paymentDue,
-                    paymentReceived: result.paymentReceived
-                });
+            this.setState({
+                fromDate: fromDate,
+                toDate: toDate,
+                broughtForwardBalance: result.broughtForwardBalance,
+                data: { payload: statementData },
+                dataloaded: true,
+                paymentDue: result.paymentDue,
+                paymentReceived: result.paymentReceived,
+                activePage: 1,
+                pageSize: 20,
+            });
         }, error => {
             console.log("ERROR ==>" + error.type);
         })
@@ -110,7 +110,8 @@ export default class Detail extends Component {
                     let cumelativeBalance = parseInt(item.CB);
                     if (debit === 0 && credit !== 0) {
                         broughtForwardBalance = cumelativeBalance + credit;
-                    } else if (credit === 0 && debit !== 0) {
+                    }
+                    else if (credit === 0 && debit !== 0) {
                         broughtForwardBalance = cumelativeBalance - debit;
                     }
                 }
@@ -136,16 +137,15 @@ export default class Detail extends Component {
             Api.fetchStatementData(this.props.username, "detail", fromDate, toDate).then(statementData => {
                 console.log(statementData);
                 let result = this.calculateAmounts(statementData);
-                this.setState(
-                    {
-                        broughtForwardBalance: result.broughtForwardBalance,
-                        data: { payload: statementData },
-                        dataloaded: true,
-                        paymentDue: result.paymentDue,
-                        paymentReceived: result.paymentReceived,
-                        customerName: displayName,
-                        sapId: this.props.username
-                    });
+                this.setState({
+                    broughtForwardBalance: result.broughtForwardBalance,
+                    data: { payload: statementData },
+                    dataloaded: true,
+                    paymentDue: result.paymentDue,
+                    paymentReceived: result.paymentReceived,
+                    customerName: displayName,
+                    sapId: this.props.username
+                });
             }, error => {
                 console.log("ERROR ==>" + error.type);
             })
@@ -161,12 +161,12 @@ export default class Detail extends Component {
         let startIndex = (this.state.activePage - 1) * this.state.pageSize;
         let endIndex = startIndex + pageSize - 1;
         console.log("Indexes =>", startIndex + " " + endIndex);
-        console.log("Dates =>", this.state.data.payload );
+        console.log("Dates =>", this.state.data.payload);
         let netOutstanding = parseInt(this.state.paymentDue) - parseInt(this.state.paymentReceived) + parseInt(this.state.broughtForwardBalance);
 
         return (
             this.state.dataloaded ?
-                <div >
+            <div >
 
                     <Menu borderless pointing attached="top"  >
 
@@ -308,8 +308,8 @@ export default class Detail extends Component {
                                 </Table.Footer> : null}
                         </Table>
                     </Segment>
-                </div>
-                : <Dimmer active inverted>
+                </div> :
+            <Dimmer active inverted>
                     <Loader size='large'>Loading</Loader>
                 </Dimmer>
 
