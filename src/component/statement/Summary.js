@@ -8,7 +8,8 @@ import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
-import numeral from 'numeral'
+import numeral from 'numeral';
+import Api from './../utils/Api'
 
 const pageSizeOptions = [
     {
@@ -30,25 +31,22 @@ export default class AppContent extends Component {
 
     constructor(props) {
         super(props);
-
-
-    }
-
-    state = {
-        activeItem: '',
-        dataloaded: false,
-        fromDate: moment([2017, 0, 1]),
-        toDate: moment(),
-        broughtForwardBalance: 0,
-        customerName: "",
-        sapId: "",
-        calendarModalOpen: false,
-        downloadModalOpen: false,
-        pageSize: 20,
-        activePage: 1,
-        data: {},
-        paymentDue: 0,
-        paymentReceived: 0
+        this.state = {
+            activeItem: '',
+            dataloaded: false,
+            fromDate: moment([2017, 0, 1]),
+            toDate: moment(),
+            broughtForwardBalance: 0,
+            customerName: "",
+            sapId: "",
+            calendarModalOpen: false,
+            downloadModalOpen: false,
+            pageSize: 20,
+            activePage: 1,
+            data: {},
+            paymentDue: 0,
+            paymentReceived: 0
+        }
     }
 
     handleCalendarOpen = () => this.setState({ calendarModalOpen: true })
@@ -65,30 +63,36 @@ export default class AppContent extends Component {
     }
 
     setPageSize = (e, { value }) => {
-
         this.setState((prevState, props) => {
             if (prevState.pageSize !== value) {
-
                 return { ...prevState, pageSize: value, activePage: 1 }
             }
             return prevState;
         })
     }
 
-    updateStateWithData = (userDisplayName, data) => {
+    calculateAmounts = (data) => {
         let paymentDue = 0;
         let paymentReceived = 0;
-        let payload = data.filter(item => {
-            if (item.CD === undefined || item.CD === "") {
-                paymentDue = paymentDue + parseInt(item.D);
-                paymentReceived = paymentReceived + parseInt(item.C);
-                return true;
+        let result = {};
 
-            }
-            return false;
-        })
+        if (data !== undefined) {
+            let payload = data.filter(item => {
 
-        this.setState({ customerName: userDisplayName, sapId: this.props.username, data: { payload: payload }, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
+                if (item.CD === undefined || item.CD === "") {
+                    paymentDue = paymentDue + parseInt(item.D);
+                    paymentReceived = paymentReceived + parseInt(item.C);
+                    result.paymentDue = paymentDue;
+                    result.paymentReceived = paymentReceived;
+
+                    return true;
+                }
+
+                return false;
+            })
+        }
+
+        return result;
     }
 
     componentDidMount() {
@@ -96,85 +100,28 @@ export default class AppContent extends Component {
         let toDate = this.state.toDate.format('DD.MM.YYYY');
         console.log("component did mount called");
         let statementData = "";
-        console.log(this.props.username);
-        axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/customer', {
-            params: {
-                customerId: this.props.username
-            },
-        }, {
-                headers: {
-                    "x-api-key": "opensesame",
-                    "Content-Type": "application/json"
-                }
-            }).then(res => {
-                console.log(res);
-                let userDisplayName = res.data.name;
-
-
-                axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/statement', {
-                    params: {
-                        customerId: this.props.username,
-                        fromDate: fromDate,
-                        toDate: toDate,
-                        reportType:"summary"
-
-                    },
-
-                }, {
-                        headers: {
-                            "x-api-key": "opensesame",
-                            "Content-Type": "application/json"
-                        }
-                    }).then(res => {
-                        console.log(res);
-                        statementData = res.data;
-                        this.updateStateWithData(userDisplayName, statementData)
-
-                    }).catch((error) => {
-                        // Error
-                        if (error.response) {
-                            // The request was made and the server responded with a status code
-                            // that falls out of the range of 2xx
-                            // console.log(error.response.data);
-                            // console.log(error.response.status);
-                            // console.log(error.response.headers);
-                        } else if (error.request) {
-                            // The request was made but no response was received
-                            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                            // http.ClientRequest in node.js
-                            console.log(error.request);
-                        } else {
-                            // Something happened in setting up the request that triggered an Error
-                            console.log('Error', error.message);
-                        }
-                        statementData = { ...data };
-                        console.log(statementData);
-                        this.updateStateWithData(userDisplayName, statementData)
-                        console.log(error.config);
-                    });
-
-            }).catch((error) => {
-                // Error
-                if (error.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-                    // console.log(error.response.data);
-                    // console.log(error.response.status);
-                    // console.log(error.response.headers);
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                    // http.ClientRequest in node.js
-                    console.log(error.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', error.message);
-                }
-                statementData = { ...data };
+        Api.getCustomer(this.props.username).then(userDisplayName => {
+            let displayName = userDisplayName;
+            console.log(displayName);
+            Api.fetchStatementData(this.props.username, "summary", fromDate, toDate).then(statementData => {
                 console.log(statementData);
-                this.updateStateWithData(this.props.username, statementData)
-                console.log(error.config);
-            });
+                let result = this.calculateAmounts(statementData);
+                this.setState(
+                    {
+                        customerName: displayName,
+                        sapId: this.props.username,
+                        data: { payload: statementData },
+                        dataloaded: true,
+                        paymentDue: result.paymentDue,
+                        paymentReceived: result.paymentReceived
+                    });
+            }, error => {
+                console.log("ERROR ==>" + error.type);
+            })
+
+        }, error => {
+            console.log("ERROR ==>" + error.type);
+        })
     }
 
     render() {
@@ -225,7 +172,7 @@ export default class AppContent extends Component {
 
                     <Segment attached >
                         <Grid columns='equal'>
-                           <Grid.Column>
+                            <Grid.Column>
                                 <Segment basic><Header
                                     as='h3'
                                     content={'Payment Received: ' + numeral(this.state.paymentReceived).format('(0,0.00)')}
@@ -288,13 +235,14 @@ export default class AppContent extends Component {
                                 })}
 
                             </Table.Body>
-                            <Table.Footer fullWidth>
-
-                                <Table.Row textAlign="right">
-
-                                </Table.Row>
-
-                            </Table.Footer>
+                             {data.payload.length === 0 ?
+                                <Table.Footer fullWidth>
+                                    <Table.Row textAlign="center">
+                                        <Table.HeaderCell colSpan='8'>
+                                            <Header>No Items Found</Header>
+                                        </Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Footer> : null}
                         </Table>
                     </Segment>
                 </div>

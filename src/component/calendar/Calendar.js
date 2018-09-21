@@ -10,10 +10,17 @@ import moment from 'moment'
 export default class Calendar extends Component {
     state = {
         activeItem: 'absolute',
-        fromDate: moment(),
-        toDate: moment(),
+        fromDate: "",
+        toDate: "",
         fromDateHasErrors: false,
         toDateHasErrors:false
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(prevState.fromDate==="" && prevState.toDate===""){
+            return {fromDate:nextProps.fromDate,toDate:nextProps.toDate};
+        }
+        return null;
     }
 
     handleFromDateError = () =>{
@@ -30,6 +37,7 @@ export default class Calendar extends Component {
            alert("Invalid Date Range!! From Date should be less than or Equal to To Date")
            this.setState({fromDateHasErrors:false});
         } else {
+          
             this.setState({ fromDate: fromDate,fromDateHasErrors:false });
         }
 
@@ -75,7 +83,7 @@ export default class Calendar extends Component {
                                 null
                 }
                 <Segment attached="bottom">
-                    <Footer {...this.state} hasErrors={this.state.fromDateHasErrors||this.state.toDateHasErrors} />
+                    <Footer {...this.props} {...this.state}  hasErrors={this.state.fromDateHasErrors||this.state.toDateHasErrors} />
                 </Segment>
             </div>
         );

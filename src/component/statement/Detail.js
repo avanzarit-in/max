@@ -7,7 +7,8 @@ import data from './../data/Data.json'
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import NumberFormat from 'react-number-format';
-import numeral from 'numeral'
+import numeral from 'numeral';
+import Api from './../utils/Api'
 
 const pageSizeOptions = [
     {
@@ -56,8 +57,28 @@ export default class Detail extends Component {
 
     handleDownloadClose = () => this.setState({ downloadModalOpen: false })
 
-    onDateChange = (fromDate, toDate) => {
-        this.setState({ fromDate: fromDate, toDate: toDate });
+    //These are moment dates
+    dateSelected = (fromDate, toDate) => {
+        let formattedFromDate = fromDate.format("DD.MM.YYYY");
+        let formattedToDate = toDate.format("DD.MM.YYYY");
+        this.setState({ dataloaded: false, calendarModalOpen: false });
+        Api.fetchStatementData(this.props.username, "detail", formattedFromDate, formattedToDate).then(statementData => {
+            console.log(statementData);
+            let result = this.calculateAmounts(statementData);
+            this.setState(
+                {
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    broughtForwardBalance: result.broughtForwardBalance,
+                    data: { payload: statementData },
+                    dataloaded: true,
+                    paymentDue: result.paymentDue,
+                    paymentReceived: result.paymentReceived
+                });
+        }, error => {
+            console.log("ERROR ==>" + error.type);
+        })
+
     }
 
     onPageChange = (e, { activePage }) => {
@@ -76,106 +97,62 @@ export default class Detail extends Component {
         })
     }
 
-    updateStateWithData = (userDisplayName, data) => {
-
+    calculateAmounts = (data) => {
         let paymentDue = 0;
         let paymentReceived = 0;
         let broughtForwardBalance = 0;
-        data.forEach((item, index) => {
-            if (index === 0) {
-                let debit = parseInt(item.D);
-                let credit = parseInt(item.C);
-                let cumelativeBalance = parseInt(item.CB);
-                if (debit === 0 && credit !== 0) {
-                    broughtForwardBalance = cumelativeBalance + credit;
-                } else if (credit === 0 && debit !== 0) {
-                    broughtForwardBalance = cumelativeBalance - debit;
+        let result = {};
+        if (data !== undefined) {
+            data.forEach((item, index) => {
+                if (index === 0) {
+                    let debit = parseInt(item.D);
+                    let credit = parseInt(item.C);
+                    let cumelativeBalance = parseInt(item.CB);
+                    if (debit === 0 && credit !== 0) {
+                        broughtForwardBalance = cumelativeBalance + credit;
+                    } else if (credit === 0 && debit !== 0) {
+                        broughtForwardBalance = cumelativeBalance - debit;
+                    }
                 }
-            }
-            paymentDue = paymentDue + parseInt(item.D);
-            paymentReceived = paymentReceived + parseInt(item.C);
+                paymentDue = paymentDue + parseInt(item.D);
+                paymentReceived = paymentReceived + parseInt(item.C);
+                result.broughtForwardBalance = broughtForwardBalance;
+                result.paymentDue = paymentDue;
+                result.paymentReceived = paymentReceived;
+            })
+        }
 
-        })
-
-        this.setState({ broughtForwardBalance: broughtForwardBalance, customerName: userDisplayName, sapId: this.props.username, data: { payload: data }, dataloaded: true, paymentDue: paymentDue, paymentReceived: paymentReceived });
-    }
-
-    componentDidUpdate() {
-
+        return result;
     }
 
     componentDidMount() {
-        //  this.setState({data:data});
         let fromDate = this.state.fromDate.format('DD.MM.YYYY');
         let toDate = this.state.toDate.format('DD.MM.YYYY');
         console.log("component did mount called");
         let statementData = "";
-        console.log(this.props.username);
-        axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/customer', {
-            params: {
-                customerId: this.props.username
-            },
-        }, {
-                headers: {
-                    "x-api-key": "opensesame",
-                    "Content-Type": "application/json"
-                }
-            }).then(res => {
-                console.log(res);
-                let userDisplayName = res.data.name;
-
-
-                axios.get('http://anmol-360348269.us-east-1.elb.amazonaws.com/api/statement', {
-                    params: {
-                        customerId: this.props.username,
-                        fromDate: fromDate,
-                        toDate: toDate,
-                        reportType:"detail"
-
-                    },
-
-                }, {
-                        headers: {
-                            "x-api-key": "opensesame",
-                            "Content-Type": "application/json"
-                        }
-                    }).then(res => {
-                        console.log(res);
-                        statementData = res.data;
-                        this.updateStateWithData(userDisplayName, statementData)
-
-                    }).catch((error) => {
-                        if (error.response) {
-                            console.log(error.response.data);
-                            console.log(error.response.status);
-                            console.log(error.response.headers);
-                        } else if (error.request) {
-                            console.log(error.request);
-                        } else {
-                            console.log('Error', error.message);
-                        }
-                        statementData = { ...data };
-                        console.log(statementData);
-                        this.updateStateWithData(userDisplayName, statementData)
-                        console.log(error.config);
-                    });
-
-            }).catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    console.log(error.response.headers);
-                } else if (error.request) {
-                    console.log(error.request);
-                } else {
-                    console.log('Error', error.message);
-                }
-                statementData = { ...data };
+        Api.getCustomer(this.props.username).then(userDisplayName => {
+            let displayName = userDisplayName;
+            console.log(displayName);
+            Api.fetchStatementData(this.props.username, "detail", fromDate, toDate).then(statementData => {
                 console.log(statementData);
-                this.updateStateWithData(this.props.username, statementData)
-                console.log(error.config);
-            });
+                let result = this.calculateAmounts(statementData);
+                this.setState(
+                    {
+                        broughtForwardBalance: result.broughtForwardBalance,
+                        data: { payload: statementData },
+                        dataloaded: true,
+                        paymentDue: result.paymentDue,
+                        paymentReceived: result.paymentReceived,
+                        customerName: displayName,
+                        sapId: this.props.username
+                    });
+            }, error => {
+                console.log("ERROR ==>" + error.type);
+            })
 
+        }, error => {
+            console.log("ERROR ==>" + error.type);
+        })
     }
 
     render() {
@@ -184,6 +161,7 @@ export default class Detail extends Component {
         let startIndex = (this.state.activePage - 1) * this.state.pageSize;
         let endIndex = startIndex + pageSize - 1;
         console.log("Indexes =>", startIndex + " " + endIndex);
+        console.log("Dates =>", this.state.data.payload );
         let netOutstanding = parseInt(this.state.paymentDue) - parseInt(this.state.paymentReceived) + parseInt(this.state.broughtForwardBalance);
 
         return (
@@ -196,10 +174,10 @@ export default class Detail extends Component {
                             <Header as="h3" >Brough Forward Balance : {numeral(this.state.broughtForwardBalance).format('(0,0.00)')}</Header>
                         </Menu.Item>
                         <Menu.Menu position="right">
-                             {data.payload.length > 0 ?
-                            <Menu.Item>
-                                <Pagination activePage={this.state.activePage} totalPages={Math.ceil(data.payload.length / this.state.pageSize)} onPageChange={this.onPageChange} />
-                                </Menu.Item>:null}
+                            {data.payload.length > 0 ?
+                                <Menu.Item>
+                                    <Pagination activePage={this.state.activePage} totalPages={Math.ceil(data.payload.length / this.state.pageSize)} onPageChange={this.onPageChange} />
+                                </Menu.Item> : null}
                             <Menu.Item>
                                 <span>
                                     Page Size {' '}
@@ -217,12 +195,12 @@ export default class Detail extends Component {
                                         centered={false}
                                         closeIcon
                                         size="large"
-                                        trigger={<Button primary icon labelPosition='left' onClick={this.handleCalendarOpen}><Icon name='clock' />{moment(this.state.fromDate, ["YYYY/MM/DD"], true).format("MMM Do YYYY") + " To " + moment(this.state.toDate, ['YYYY/MM/DD'], true).format("MMM Do YYYY")}</Button>}
+                                        trigger={<Button primary icon labelPosition='left' onClick={this.handleCalendarOpen}><Icon name='clock' />{this.state.fromDate.format("MMM Do YYYY") + " To " + this.state.toDate.format("MMM Do YYYY")}</Button>}
                                         open={this.state.calendarModalOpen}
                                         onClose={this.handleCalendarClose}>
                                         <Modal.Header>Select a Time Range to view the statement of account</Modal.Header>
                                         <Modal.Content>
-                                            <Calendar />
+                                            <Calendar fromDate={this.state.fromDate} toDate={this.state.toDate} onDateChangeHandler={this.dateSelected} />
                                         </Modal.Content>
                                     </Modal>
                                 </Form.Field>
@@ -320,7 +298,14 @@ export default class Detail extends Component {
                                 })}
 
                             </Table.Body>
-                           
+                            {data.payload.length === 0 ?
+                                <Table.Footer fullWidth>
+                                    <Table.Row textAlign="center">
+                                        <Table.HeaderCell colSpan='8'>
+                                            <Header>No Items Found</Header>
+                                        </Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Footer> : null}
                         </Table>
                     </Segment>
                 </div>
