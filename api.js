@@ -94,6 +94,27 @@ const formatTime = (timeInText) => {
     return timeInText;
 }
 
+const computeCarryForwardBalance = (data) => {
+
+    let broughtForwardBalance = 0;
+    let debit = parseInt(data[0]["D"]);
+    let credit = parseInt(data[0]["C"]);
+    let cumelativeBalance = parseInt(data[0]["CB"]);
+
+    if (debit === 0 && credit !== 0) {
+        broughtForwardBalance = cumelativeBalance + credit;
+    }
+    else if (credit === 0 && debit !== 0) {
+        broughtForwardBalance = cumelativeBalance - debit;
+    }
+
+    data.forEach(item => {
+        item["CFB"] = broughtForwardBalance;
+
+    })
+
+    return data;
+}
 
 app.get('/api/statement', function(req, res) {
     let result = [];
@@ -149,7 +170,7 @@ app.get('/api/statement', function(req, res) {
             }
 
         }
-        else if (reportType === "detail") {
+        else if (reportType === "detail" || reportType === "download") {
             query = {
                 $and: [{
                         "DD": { $gte: moment(fromDateFormatted, "DD.MM.YYYY", true).toDate() }
@@ -198,11 +219,12 @@ app.get('/api/statement', function(req, res) {
                                 obj["C"] = item["Credit"];
                                 obj["CB"] = item["CumulativeBalance"];
                                 obj["RM"] = item["Remarks"];
-
                                 result.push(obj);
                             }
                         })
-
+                    }
+                    if (reportType === "download") {
+                        result = computeCarryForwardBalance(result);
                     }
                     res.send(result);
                 }).catch((error) => {
@@ -224,6 +246,9 @@ app.get('/api/statement', function(req, res) {
                 });
             }
             else {
+                if (reportType === "download") {
+                    result = computeCarryForwardBalance(result);
+                }
                 res.send(result);
             }
         })
