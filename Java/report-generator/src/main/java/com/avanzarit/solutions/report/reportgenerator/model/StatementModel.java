@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatementModel {
+    private String carryForwardBalance;
     private String reference;
     private String clearingDocumentNo;
     private String documentDate;
@@ -14,6 +15,15 @@ public class StatementModel {
     private String credit;
     private String cumulativeBalance;
     private String remarks;
+
+    @JsonProperty(value = "CFB")
+    public String getCarryForwardBalance() {
+        return carryForwardBalance;
+    }
+
+    public void setCarryForwardBalance(String carryForwardBalance) {
+        this.carryForwardBalance = carryForwardBalance;
+    }
 
     @JsonProperty(value = "R")
     public String getReference() {

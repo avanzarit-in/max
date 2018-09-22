@@ -4,6 +4,7 @@ import com.avanzarit.solutions.report.reportgenerator.model.CustomerModel;
 import com.avanzarit.solutions.report.reportgenerator.model.StatementModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -12,11 +13,11 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,10 +26,10 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+
 public class MaxReportAPI {
     private static boolean useProxy = false;
-    private static String STATEMENT_URL = "http://max-1383804388.us-east-1.elb.amazonaws.com/api/statement?customerId={0}&fromDate={1}&toDate={2}";
+    private static String STATEMENT_URL = "http://max-1383804388.us-east-1.elb.amazonaws.com/api/statement?customerId={0}&fromDate={1}&toDate={2}&reportType={3}";
     private static String CUSTOMER_DETAILS_URL = "http://max-1383804388.us-east-1.elb.amazonaws.com/api/customer?customerId={0}";
 
 
@@ -60,7 +61,7 @@ public class MaxReportAPI {
         CloseableHttpClient httpclient;
         HttpGet httpGet;
 
-        String url = MessageFormat.format(STATEMENT_URL, customerId, fromDate, toDate);
+        String url = MessageFormat.format(STATEMENT_URL, customerId, fromDate, toDate,"download");
         System.out.println(url);
         if (useProxy) {
             httpclient = getHttpClientWithCredentialProvider();

@@ -37,9 +37,6 @@ import java.util.Map;
 @Path("/report")
 public class GenerateReportComponent {
 
-    @Autowired
-    MaxReportAPI reportAPI;
-
     @GET
     @Path("/statement")
     public Response statement(@QueryParam("customerId") String customerId, @QueryParam("fromDate") String fromDate, @QueryParam("toDate") String toDate) throws JRException, IOException {

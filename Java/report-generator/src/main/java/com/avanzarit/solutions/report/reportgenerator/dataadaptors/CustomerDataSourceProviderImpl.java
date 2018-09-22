@@ -1,5 +1,8 @@
 package com.avanzarit.solutions.report.reportgenerator.dataadaptors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
 import net.sf.jasperreports.engine.JRException;
@@ -28,8 +31,10 @@ public class CustomerDataSourceProviderImpl implements JRDataSourceProvider {
 	 */
 	@Override
 	public JRDataSource create(JasperReport arg0) throws JRException {
-		//	arg0.getParameters()
-		return new CustomerDataSourceImpl();
+		Map<String,Object> params=new HashMap<>();
+		params.put("customerId", "AS14072");
+
+		return new CustomerDataSourceImpl(params);
 	}
 
 	/**

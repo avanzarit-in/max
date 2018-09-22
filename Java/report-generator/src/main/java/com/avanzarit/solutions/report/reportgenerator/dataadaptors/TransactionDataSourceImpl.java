@@ -46,6 +46,8 @@ public class TransactionDataSourceImpl implements JRDataSource {
     public Object getFieldValue(JRField arg0) throws JRException {
         // TODO Auto-generated method stub
         switch (arg0.getName()) {
+            case "carryforward_balance":
+                return Float.parseFloat(statementData.get(counter).getCarryForwardBalance());
             case "reference_no":
                 return statementData.get(counter).getReference();
             case "clearing_doc_no":

@@ -1,5 +1,8 @@
 package com.avanzarit.solutions.report.reportgenerator.dataadaptors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
 import net.sf.jasperreports.engine.JRException;
@@ -9,9 +12,9 @@ import net.sf.jasperreports.engine.base.JRBaseField;
 
 /**
  *
- * This class implements a DataSource for the data adapter DataSourceimpl. A data source it 
- * is like an envelope for the data adapter. It can create and destroy the data adapter itself, 
- * but it can also provide informations about the data adapters, like which fields it provide and 
+ * This class implements a DataSource for the data adapter DataSourceimpl. A data source it
+ * is like an envelope for the data adapter. It can create and destroy the data adapter itself,
+ * but it can also provide informations about the data adapters, like which fields it provide and
  * a description\type for everyone of them.
  *
  *
@@ -22,14 +25,17 @@ import net.sf.jasperreports.engine.base.JRBaseField;
 public class TransactionDataSourceProviderImpl implements JRDataSourceProvider {
 
 	/**
-	 * Build and return the data adapter that will provide an access to the real 
-	 * data that will be used to fill the report. 
+	 * Build and return the data adapter that will provide an access to the real
+	 * data that will be used to fill the report.
 	 * In this case will be returned an instance of MyImplementation.
 	 */
 	@Override
 	public JRDataSource create(JasperReport arg0) throws JRException {
-
-		return new TransactionDataSourceImpl();
+		Map<String,Object> params=new HashMap<>();
+		params.put("customerId", "AS14072");
+		params.put("fromDate", "01.01.2017");
+		params.put("toDate","09.09.2018");
+		return new TransactionDataSourceImpl(params);
 	}
 
 	/**
@@ -51,16 +57,17 @@ public class TransactionDataSourceProviderImpl implements JRDataSourceProvider {
 	@Override
 	public JRField[] getFields(JasperReport arg0) throws JRException, UnsupportedOperationException {
 
+		JRField carryForwardBalance = new MyField("carryforward_balance","Carry Forward Balance",Float.class);
 		JRField referenceNo = new MyField("reference_no","Transaction Reference No");
 		JRField clearingDocumentNo = new MyField("clearing_doc_no","Clearing Document number");
 		JRField documentDate = new MyField("document_date","Document Date");
 		JRField perticulars = new MyField("perticulars","Perticulars about the transaction");
-		JRField quantity = new MyField("quantity","Material Quantity",Integer.class);
-		JRField debitAmount = new MyField("debit","Debit Amount",Integer.class);
-		JRField creditAmount = new MyField("credit","Credit Amount",Integer.class);
-		JRField cumulativeBalance = new MyField("cumulative_balance","Cumulative Balance",Integer.class);
+		JRField quantity = new MyField("quantity","Material Quantity",Float.class);
+		JRField debitAmount = new MyField("debit","Debit Amount",Float.class);
+		JRField creditAmount = new MyField("credit","Credit Amount",Float.class);
+		JRField cumulativeBalance = new MyField("cumulative_balance","Cumulative Balance",Float.class);
 		JRField remarks = new MyField("remarks","Remarks");
-		return new JRField[]{referenceNo, clearingDocumentNo,documentDate,perticulars,quantity,debitAmount,creditAmount,cumulativeBalance,remarks};
+		return new JRField[]{carryForwardBalance,referenceNo, clearingDocumentNo,documentDate,perticulars,quantity,debitAmount,creditAmount,cumulativeBalance,remarks};
 	}
 
 	/**
