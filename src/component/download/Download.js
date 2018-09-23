@@ -7,8 +7,9 @@ import { Button } from 'semantic-ui-react'
 export default class Download extends Component {
     state = {
         validated: false,
-        loading:false,
-        text:'Download'
+        loading: false,
+        text: 'Download',
+        disabled:false
     }
     onChange = (value) => {
         console.log("Captcha value:", value);
@@ -21,22 +22,29 @@ export default class Download extends Component {
               })*/
         this.setState({ validated: true });
     }
+    
 
     download = () => {
+        let formattedFromDate = this.props.fromDate.format("DD.MM.YYYY");
+        let formattedToDate = this.props.toDate.format("DD.MM.YYYY");
+        let customerId = this.props.customerId;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://max-1383804388.us-east-1.elb.amazonaws.com/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function (e) {
+            if (xhr.status == 200) {
+                var blob = new Blob([xhr.response], { type: "application/pdf" });
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "Report_" + new Date() + ".pdf";
+                link.click();
+                 this.setState({ loading: false, text: 'Downloaded',disabled:true});
+            }
+        }.bind(this);
+        xhr.send();
 
-        axios.get('http://localhost:8080/download', {
-            responseType: 'blob' // important
-        }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'statement.pdf');
-            document.body.appendChild(link);
-            link.click(); 
-             this.setState({loading:false,validated:false});
-        });
 
-        this.setState({loading:true,text:'Downloading...'});
+        this.setState({ loading: true, text: 'Downloading...',disabled:true });
     }
 
     render() {
@@ -49,7 +57,7 @@ export default class Download extends Component {
                     sitekey="6Leb5CIUAAAAABXh137Qc04KOnDocgq_H3m19qcS"
                     onChange={this.onChange} />
 
-                {this.state.validated ? <Button loading={this.state.loading} primary onClick={this.download}>{this.state.text}</Button> : null}
+                {this.state.validated ? <Button disabled={this.state.disabled} loading={this.state.loading} primary onClick={this.download}>{this.state.text}</Button> : null}
 
             </div>
 

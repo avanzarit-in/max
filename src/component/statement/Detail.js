@@ -218,7 +218,7 @@ export default class Detail extends Component {
                                     onClose={this.handleDownloadClose}>
                                     <Modal.Header>Download Statement</Modal.Header>
                                     <Modal.Content>
-                                        <Download />
+                                        <Download fromDate={this.state.fromDate} toDate={this.state.toDate} customerId={this.state.sapId}/>
                                     </Modal.Content>
                                 </Modal>
                             </Menu.Item> 
