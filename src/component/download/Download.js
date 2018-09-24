@@ -35,9 +35,12 @@ export default class Download extends Component {
             if (xhr.status == 200) {
                 var blob = new Blob([xhr.response], { type: "application/pdf" });
                 var link = document.createElement('a');
+                link.setAttribute("type", "hidden"); // make it hidden if needed
                 link.href = window.URL.createObjectURL(blob);
                 link.download = "Report_" + new Date() + ".pdf";
+                document.body.appendChild(link);
                 link.click();
+                link.remove();
                  this.setState({ loading: false, text: 'Downloaded',disabled:true});
             }
         }.bind(this);
