@@ -124,6 +124,11 @@ export default class AppContent extends Component {
         })
     }
 
+    handleButtonClick = () => {
+        console.log(this.props);
+        this.props.history.push('/statement');
+    }
+
     render() {
 
         const { activeItem } = this.state
@@ -161,10 +166,14 @@ export default class AppContent extends Component {
                                 }
                             </Menu.Item>
                             <Menu.Item name='detailed'>
-                                <Button primary icon labelPosition='left'>
+                                <Button primary onClick={this.handleButtonClick}>
+                                    <Icon name='dochub' />
+                                    View Detailed Statement
+                                </Button>
+                                {/**   <Button primary icon labelPosition='left'>
                                     <Icon name='dochub' />
                                     <Link style={{ color: 'white' }} to={`/statement`}>View Detailed Statement</Link>
-                                </Button>
+                                </Button> **/}
                             </Menu.Item>
 
                         </Menu.Menu>
@@ -235,7 +244,7 @@ export default class AppContent extends Component {
                                 })}
 
                             </Table.Body>
-                             {data.payload.length === 0 ?
+                            {data.payload.length === 0 ?
                                 <Table.Footer fullWidth>
                                     <Table.Row textAlign="center">
                                         <Table.HeaderCell colSpan='8'>

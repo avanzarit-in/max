@@ -68,6 +68,12 @@ export default class Landing extends Component {
         })
     }
 
+    handleButtonClick =() => {
+      console.log(this.props);
+    this.props.history.push('/summary');
+  }
+
+
   render() {
 
     let today = moment().format("DD/MM/YYYY");
@@ -172,8 +178,9 @@ export default class Landing extends Component {
             </Card.Description>
           </Card.Content>
           <Card.Content extra>
-            <Button primary>
-            <Link style={{ color: 'white' }} to={`/summary`}>View Details</Link>
+            <Button primary onClick={this.handleButtonClick}>
+        {/**    <Link style={{ color: 'white' }} to={`/summary`}>View Details</Link> **/}
+        View Details
             </Button>
           </Card.Content>
         </Card>
