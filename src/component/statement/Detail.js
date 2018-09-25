@@ -171,7 +171,7 @@ export default class Detail extends Component {
                     <Menu borderless pointing attached="top"  >
 
                         <Menu.Item header >
-                            <Header as="h3" >Brough Forward Balance : {numeral(this.state.broughtForwardBalance).format('(0,0.00)')}</Header>
+                            <Header as="h3" >Brought Forward Balance : {numeral(this.state.broughtForwardBalance).format('(0,0.00)')}</Header>
                         </Menu.Item>
                         <Menu.Menu position="right">
                             {data.payload.length > 0 ?

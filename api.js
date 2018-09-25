@@ -210,6 +210,7 @@ app.get('/api/statement', function(req, res) {
                                 let obj = {}
                                 obj["R"] = item["Reference"];
                                 obj["CD"] = item["ClearingDocumentNo"];
+                                obj["DN"] = item["DocumentNo"];
                                 obj["DD"] = dateTime;
                                 obj["DDT"] = moment(obj["DD"]).format("DD/MM/YYYY");
                                 obj["TTT"] = item["EntryTime"];
