@@ -1,35 +1,29 @@
 package com.avanzarit.solutions.report.reportgenerator;
 
-import com.avanzarit.solutions.report.reportgenerator.api.MaxReportAPI;
 import com.avanzarit.solutions.report.reportgenerator.dataadaptors.CustomerDataSourceImpl;
-
-import com.avanzarit.solutions.report.reportgenerator.model.CustomerModel;
-import com.avanzarit.solutions.report.reportgenerator.model.StatementModel;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
+import net.sf.jasperreports.export.type.PdfPrintScalingEnum;
 import org.springframework.core.io.ClassPathResource;
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.*;
-import java.io.*;
-
-
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -64,7 +58,15 @@ public class GenerateReportComponent {
         JasperPrint jr = JasperFillManager.fillReport(jasperReport, params,
                 new CustomerDataSourceImpl(params));
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jr, outputStream);
+  /*      JasperExportManager.exportReportToPdfStream(jr, outputStream);*/
+
+        JRPdfExporter pdfExporter = new JRPdfExporter();
+        pdfExporter.setExporterInput(new SimpleExporterInput(jr));
+        pdfExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+        SimplePdfExporterConfiguration pdfExporterConfiguration = new SimplePdfExporterConfiguration();
+        pdfExporterConfiguration.setPrintScaling(PdfPrintScalingEnum.DEFAULT);
+        pdfExporter.setConfiguration(pdfExporterConfiguration);
+        pdfExporter.exportReport();
 
 /*        JRXlsExporter xlsExporter = new JRXlsExporter();
         xlsExporter.setExporterInput(new SimpleExporterInput(jr));

@@ -4,7 +4,6 @@ import com.avanzarit.solutions.report.reportgenerator.model.CustomerModel;
 import com.avanzarit.solutions.report.reportgenerator.model.StatementModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -13,7 +12,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -106,7 +104,7 @@ public class MaxReportAPI {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 new AuthScope("kdc-proxy.wipro.com", 8080),
-                new UsernamePasswordCredentials("spadhi", "puja@2018"));
+                new UsernamePasswordCredentials("spadhi", "durga@2018"));
 
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCredentialsProvider(credsProvider).build();
