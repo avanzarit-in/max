@@ -59,6 +59,7 @@ public class TransactionDataSourceProviderImpl implements JRDataSourceProvider {
 
 		JRField carryForwardBalance = new MyField("carryforward_balance","Carry Forward Balance",Float.class);
 		JRField referenceNo = new MyField("reference_no","Transaction Reference No");
+		JRField documentNo = new MyField("document_no","Document Number");
 		JRField clearingDocumentNo = new MyField("clearing_doc_no","Clearing Document number");
 		JRField documentDate = new MyField("document_date","Document Date");
 		JRField perticulars = new MyField("perticulars","Perticulars about the transaction");
@@ -67,7 +68,7 @@ public class TransactionDataSourceProviderImpl implements JRDataSourceProvider {
 		JRField creditAmount = new MyField("credit","Credit Amount",Float.class);
 		JRField cumulativeBalance = new MyField("cumulative_balance","Cumulative Balance",Float.class);
 		JRField remarks = new MyField("remarks","Remarks");
-		return new JRField[]{carryForwardBalance,referenceNo, clearingDocumentNo,documentDate,perticulars,quantity,debitAmount,creditAmount,cumulativeBalance,remarks};
+		return new JRField[]{carryForwardBalance,documentNo,referenceNo, clearingDocumentNo,documentDate,perticulars,quantity,debitAmount,creditAmount,cumulativeBalance,remarks};
 	}
 
 	/**

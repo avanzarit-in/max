@@ -8,6 +8,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +48,11 @@ public class TransactionDataSourceImpl implements JRDataSource {
         // TODO Auto-generated method stub
         switch (arg0.getName()) {
             case "carryforward_balance":
-                return Float.parseFloat(statementData.get(counter).getCarryForwardBalance());
+                return Float.valueOf(statementData.get(counter).getCarryForwardBalance());
             case "reference_no":
                 return statementData.get(counter).getReference();
+            case "document_no":
+                return statementData.get(counter).getDocumentNo();
             case "clearing_doc_no":
                 return statementData.get(counter).getClearingDocumentNo();
             case "document_date":
@@ -57,19 +60,21 @@ public class TransactionDataSourceImpl implements JRDataSource {
             case "perticulars":
                 return statementData.get(counter).getPerticulars();
             case "quantity":
-                return Float.parseFloat(statementData.get(counter).getQuantity());
+                return Float.valueOf(statementData.get(counter).getQuantity());
             case "debit":
-                return Float.parseFloat(statementData.get(counter).getDebit());
+                return Float.valueOf(statementData.get(counter).getDebit());
             case "credit":
-                return Float.parseFloat(statementData.get(counter).getCredit());
+                return Float.valueOf(statementData.get(counter).getCredit());
             case "cumulative_balance":
-                return Float.parseFloat(statementData.get(counter).getCumulativeBalance());
+                return Float.valueOf(statementData.get(counter).getCumulativeBalance());
             case "remarks":
                 return statementData.get(counter).getRemarks();
         }
         return null;
 
     }
+
+
 
     @Override
     public boolean next() throws JRException {

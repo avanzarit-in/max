@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class StatementModel {
     private String carryForwardBalance;
     private String reference;
+    private String documentNo;
     private String clearingDocumentNo;
     private String documentDate;
     private String perticulars;
@@ -23,6 +24,15 @@ public class StatementModel {
 
     public void setCarryForwardBalance(String carryForwardBalance) {
         this.carryForwardBalance = carryForwardBalance;
+    }
+
+    @JsonProperty(value = "DN")
+    public String getDocumentNo() {
+        return documentNo;
+    }
+
+    public void setDocumentNo(String documentNo) {
+        this.documentNo = documentNo;
     }
 
     @JsonProperty(value = "R")

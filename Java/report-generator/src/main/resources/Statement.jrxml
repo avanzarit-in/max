@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Statement" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="59d25f74-7272-4e26-b79c-7e67dc168415">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MaxCustomerDataAdapter.xml"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="customer_id" class="java.lang.String">
+		<fieldDescription><![CDATA[SAP Customer Id]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[Customer Name]]></fieldDescription>
+	</field>
+	<field name="address1" class="java.lang.String">
+		<fieldDescription><![CDATA[Address Line 1]]></fieldDescription>
+	</field>
+	<field name="address2" class="java.lang.String">
+		<fieldDescription><![CDATA[Address Line 2]]></fieldDescription>
+	</field>
+	<field name="address3" class="java.lang.String">
+		<fieldDescription><![CDATA[Address Line 3]]></fieldDescription>
+	</field>
+	<field name="state" class="java.lang.String">
+		<fieldDescription><![CDATA[State]]></fieldDescription>
+	</field>
+	<field name="postcode" class="java.lang.String">
+		<fieldDescription><![CDATA[Post Code]]></fieldDescription>
+	</field>
+	<variable name="BroughtForwardBalance" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="159" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<image>
+				<reportElement x="0" y="0" width="143" height="30" uuid="0e049968-67c2-4117-ba16-a483379b5eaf"/>
+				<imageExpression><![CDATA["images/max-cement.jpg"]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement x="1" y="40" width="200" height="106" isRemoveLineWhenBlank="true" uuid="63c1ecd0-b345-417b-b54b-a6534254919b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textField>
+					<reportElement x="70" y="1" width="130" height="14" uuid="099c0da4-586f-4ca5-b6ea-b2de7a852186"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{customer_id}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="70" y="16" width="130" height="15" uuid="bf0587a3-1e4c-4a32-aa34-e88dd6b8736f"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="70" y="31" width="130" height="15" isRemoveLineWhenBlank="true" uuid="5936d270-d729-46e0-a1a9-b93844181359"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textElement>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{address1}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="70" y="46" width="130" height="15" isRemoveLineWhenBlank="true" uuid="0909ecee-3af9-41b2-8091-f8ad08e8f399"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{address2}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="70" y="61" width="130" height="15" isRemoveLineWhenBlank="true" uuid="389cd3b2-f0c9-41d6-89f0-8c7d7fb5fe7e"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{address3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="70" y="76" width="130" height="15" uuid="293563c7-941c-4abf-9966-7f80825ecc12"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{state}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="70" y="91" width="130" height="15" uuid="0a712897-7a7f-486b-b5c5-48f34aef215b"/>
+					<box topPadding="0" leftPadding="5" bottomPadding="0" rightPadding="0"/>
+					<textFieldExpression><![CDATA[$F{postcode}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="2" width="66" height="14" uuid="946bdb73-c38c-49aa-820e-d1253e3286c4"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Customer Id:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="16" width="66" height="14" uuid="4135e2f5-3553-4862-8ce9-017da72c6f69"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Name:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="30" width="66" height="14" uuid="622af069-ba10-4f47-8121-bb692a6eb87c"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Address:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1" y="91" width="66" height="14" uuid="be46fe80-cb7b-4ca0-bce8-7d5cc40b6235"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Pin Code:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="239" y="0" width="70" height="15" uuid="92194760-d1cf-40d2-aa4c-bacc8e04a37e"/>
+				<textField>
+					<reportElement x="30" y="0" width="10" height="14" uuid="9904910c-2ae0-4be1-9e1e-167bec7e548b"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="50" y="0" width="10" height="14" uuid="f623c8bd-b1ce-4b6b-a9ae-7aaf524ccb41"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="30" height="14" uuid="97f58b82-05ef-4f93-b3cb-c796222c8766"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Page:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="40" y="0" width="10" height="14" uuid="427affaa-3e1e-4efe-8eb1-aa67820a0370"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[of]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement x="400" y="0" width="175" height="14" uuid="ecb5692d-a51a-4a5e-add6-8262976245c0"/>
+				<text><![CDATA[Green Valliey Industries Limited]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="40" width="172" height="14" uuid="2b679424-c1c9-4a49-bab9-681ef181cb64"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Regd. Office and Plant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="40" width="173" height="14" uuid="86d07ada-d069-4c97-824d-513f51702cdd"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Group Corporate Office]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="54" width="172" height="14" uuid="366b9d6c-29d3-40d7-8e99-7f7187b82df2"/>
+				<text><![CDATA[Vill. Nongsning,P.O Chiehruphi,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="68" width="172" height="14" uuid="10e1ed5e-7676-4301-88eb-61be40018099"/>
+				<text><![CDATA[P.S. Khliehriat,Dist. Jaintia Hills ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="231" y="82" width="171" height="14" uuid="8cad704b-292c-4e26-b95f-9d3a7118b7fe"/>
+				<text><![CDATA[Meghalaya -739 200]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="54" width="173" height="14" uuid="ec3e3d2c-f755-45fd-a099-a1eba49b8c77"/>
+				<text><![CDATA[602’LORDS’ 7/1 Lord Sinha Road]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="68" width="173" height="14" uuid="676cb988-9f1a-4aae-a0dc-fd3d6f67edf4"/>
+				<text><![CDATA[Kolkata -700 071]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="419" y="82" width="156" height="14" uuid="bcb1862a-c08a-4eaf-8c48-9c853f5c5e02"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="96" width="173" height="14" uuid="ed1e342e-f06a-4851-a9b1-5fe555b5d46c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Guwahati Office]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="110" width="173" height="14" uuid="5e67775b-51bb-4ca8-a47e-338ad1ce3ead"/>
+				<text><![CDATA[4th Floor, LB Bazaar,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="124" width="173" height="14" uuid="55df1e3a-bb9c-454b-92c0-09228f458f16"/>
+				<text><![CDATA[GS Road]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="138" width="173" height="14" uuid="6b69ee18-b238-4fe1-92fe-d7cb16cf2e27"/>
+				<text><![CDATA[Guwahati -781 005]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="231" y="110" width="170" height="14" uuid="e1a62f38-6109-4fa9-9b86-bf64016c650f"/>
+				<text><![CDATA[Email: info@greenvalliey.com]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="231" y="124" width="170" height="14" uuid="515c062f-8e33-4984-bc3e-5379bec8a2b4"/>
+				<text><![CDATA[Website: www.maxcement.co.in]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="38">
+			<staticText>
+				<reportElement x="204" y="2" width="166" height="20" uuid="10066d1d-134d-4509-943b-131d50171924"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Statement of Account]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="585" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="585" uuid="c1c75f3e-dcf8-4817-99b3-5c481e3c0935"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[new com.avanzarit.solutions.report.reportgenerator.dataadaptors.TransactionDataSourceImpl($P{REPORT_PARAMETERS_MAP})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["TransactionDetails.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>
