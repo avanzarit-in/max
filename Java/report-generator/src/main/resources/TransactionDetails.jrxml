@@ -86,7 +86,7 @@
 				</staticText>
 				<staticText>
 					<reportElement x="350" y="0" width="130" height="14" uuid="befb8bdd-c7eb-4132-bdf7-83918116424c"/>
-					<text><![CDATA[Brough Forward Balance:]]></text>
+					<text><![CDATA[Brought Forward Balance:]]></text>
 				</staticText>
 				<textField pattern="#,##0.00#;#,##0.00#-">
 					<reportElement x="480" y="0" width="84" height="14" uuid="be00dc66-e2df-49d8-bb00-3d0186d15729"/>
@@ -123,6 +123,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
 				<text><![CDATA[Document No]]></text>
 			</staticText>
 			<staticText>
@@ -153,7 +156,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<text><![CDATA[Perticulars]]></text>
+				<text><![CDATA[Particulars]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="255" y="0" width="63" height="20" backcolor="#D9D4D4" uuid="f9e89428-8551-48ac-accc-698ac7e9b351">
@@ -260,11 +263,22 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{document_no}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="128" y="0" width="64" height="36" backcolor="#D7FCFA" uuid="cf5c3282-8258-42d1-84d0-b06a52ec3abb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="09bdab05-e1a1-4ec7-947c-b7aca04945f6"/>
+					<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+					<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+					<property name="com.jaspersoft.layout.grid.weight.x" value="1.0"/>
+					<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+					<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+					<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+					<property name="com.jaspersoft.layout.grid.weight.fixed" value="true"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="4" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -393,12 +407,12 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<staticText>
-					<reportElement x="145" y="0" width="72" height="15" uuid="cef4b962-0c25-45ad-920a-96f0fd5f7e08"/>
+					<reportElement x="155" y="0" width="100" height="15" uuid="cef4b962-0c25-45ad-920a-96f0fd5f7e08"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[TOTAL]]></text>
 				</staticText>
 				<textField pattern="#,##0.000">
-					<reportElement stretchType="ElementGroupBottom" x="215" y="0" width="71" height="15" uuid="4ea1fa89-b978-4c0e-a900-dd4196ffe38e"/>
+					<reportElement stretchType="ElementGroupBottom" x="255" y="0" width="63" height="15" uuid="4ea1fa89-b978-4c0e-a900-dd4196ffe38e"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -409,7 +423,7 @@
 					<textFieldExpression><![CDATA[$V{TotalQuantity}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;#,##0.00#-">
-					<reportElement stretchType="ContainerBottom" x="286" y="0" width="71" height="15" uuid="8b3b6d74-f8bd-4243-88df-a783dad4536a"/>
+					<reportElement stretchType="ContainerBottom" x="318" y="0" width="63" height="15" uuid="8b3b6d74-f8bd-4243-88df-a783dad4536a"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +434,7 @@
 					<textFieldExpression><![CDATA[$V{TotalDebit}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;#,##0.00#-">
-					<reportElement x="357" y="0" width="71" height="15" uuid="033df357-8cc7-4d14-a303-9ccf822e45f2"/>
+					<reportElement x="381" y="0" width="63" height="15" uuid="033df357-8cc7-4d14-a303-9ccf822e45f2"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -431,7 +445,7 @@
 					<textFieldExpression><![CDATA[$V{TotalCredit}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;#,##0.00#-">
-					<reportElement x="428" y="0" width="71" height="15" uuid="58b6758b-f5b7-42d2-aed5-fb05ab86c4b8"/>
+					<reportElement x="444" y="0" width="63" height="15" uuid="58b6758b-f5b7-42d2-aed5-fb05ab86c4b8"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
