@@ -122,7 +122,10 @@ app.get('/api/statement', function(req, res) {
     let customerId = req.query.customerId;
     let fromDateFormatted = req.query.fromDate;
     let toDateFormatted = req.query.toDate;
-    let toDate = moment(toDateFormatted, "DD.MM.YYYY", true);
+    let toDate = moment(toDateFormatted + " 23:59:59", "DD.MM.YYYY HH:mm:ss", true);
+    let fromDate = moment(fromDateFormatted + " 00:00:00", "DD.MM.YYYY HH:mm:ss", true);
+    // console.log("fromDate =>" + fromDate.format("DD.MM.YYYY HH:mm:ss"));
+    // console.log("tomDate =>" + toDate.format("DD.MM.YYYY HH:mm:ss"));
     console.log(customerId + "," + fromDateFormatted + "," + toDateFormatted);
 
     app.service('customer').get(customerId).then(customer => {
@@ -154,10 +157,10 @@ app.get('/api/statement', function(req, res) {
         if (reportType === "summary") {
             query = {
                 $and: [{
-                        "DD": { $gte: moment(fromDateFormatted, "DD.MM.YYYY", true).toDate() }
+                        "DD": { $gte: fromDate.toDate() }
                     },
                     {
-                        "DD": { $lte: moment(toDateFormatted, "DD.MM.YYYY", true).toDate() }
+                        "DD": { $lte: toDate.toDate() }
                     },
                     {
                         "CD": ""
@@ -173,10 +176,10 @@ app.get('/api/statement', function(req, res) {
         else if (reportType === "detail" || reportType === "download") {
             query = {
                 $and: [{
-                        "DD": { $gte: moment(fromDateFormatted, "DD.MM.YYYY", true).toDate() }
+                        "DD": { $gte: fromDate.toDate() }
                     },
                     {
-                        "DD": { $lte: moment(toDateFormatted, "DD.MM.YYYY", true).toDate() }
+                        "DD": { $lte: toDate.toDate() }
                     }
                 ],
                 $sort: {
@@ -192,7 +195,7 @@ app.get('/api/statement', function(req, res) {
                 result.push(item);
             });
 
-            if (toDate.isAfter(lastUpdateDate)) {
+            if (toDate.isSameOrAfter(lastUpdateDate)) {
                 let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + customerId + "'&FromDate='" + lastUpdateDateFormatted + "'&FromTime='" + lastUpdateTimeFormatted + "'&$format=json";
                 console.log(url);
                 axios.get(url, {
@@ -206,7 +209,7 @@ app.get('/api/statement', function(req, res) {
 
                         response.data.d.results.map(function(item, index) {
                             var dateTime = moment(item["DocumentDate"] + " " + formatTime(item["EntryTime"]), "YYYYMMDD HH:mm:ss", true).toDate();
-                            if (moment(dateTime).isValid()) {
+                            if (moment(dateTime).isValid() && moment(dateTime).isSameOrAfter(fromDate) && moment(dateTime).isSameOrBefore(toDate)) {
                                 let obj = {}
                                 obj["R"] = item["Reference"];
                                 obj["CD"] = item["ClearingDocumentNo"];
