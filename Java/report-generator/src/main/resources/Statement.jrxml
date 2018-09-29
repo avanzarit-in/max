@@ -114,9 +114,9 @@
 				</staticText>
 			</frame>
 			<staticText>
-				<reportElement x="162" y="2" width="268" height="20" uuid="ecb5692d-a51a-4a5e-add6-8262976245c0"/>
+				<reportElement x="162" y="2" width="298" height="35" uuid="ecb5692d-a51a-4a5e-add6-8262976245c0"/>
 				<textElement textAlignment="Left">
-					<font size="14" isBold="true" isUnderline="false"/>
+					<font size="16" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Green Valliey Industries Limited]]></text>
 			</staticText>
