@@ -89,7 +89,7 @@
 					<text><![CDATA[To:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="350" y="0" width="130" height="14" uuid="befb8bdd-c7eb-4132-bdf7-83918116424c"/>
+					<reportElement x="315" y="0" width="165" height="14" uuid="befb8bdd-c7eb-4132-bdf7-83918116424c"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Brought Forward Balance:]]></text>
 				</staticText>
