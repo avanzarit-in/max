@@ -134,7 +134,7 @@
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Group Corporate Office]]></text>
+					<text><![CDATA[Corporate Office]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="0" y="14" width="172" height="14" uuid="366b9d6c-29d3-40d7-8e99-7f7187b82df2"/>

@@ -69,28 +69,35 @@
 			<frame>
 				<reportElement x="3" y="0" width="564" height="14" uuid="c9c636b8-320d-4342-b2f8-c6752abb5d1e"/>
 				<textField>
-					<reportElement x="37" y="0" width="100" height="14" uuid="296ec67d-3540-4696-9900-299b02ac3daa"/>
+					<reportElement x="37" y="0" width="57" height="14" uuid="296ec67d-3540-4696-9900-299b02ac3daa"/>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("fromDate")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="0" width="37" height="14" uuid="3b574bd5-fabd-4349-8649-47653e8786e9"/>
+					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[From : ]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="182" y="0" width="100" height="14" uuid="ea21c28d-9fbe-4788-8a29-fe3358533e4d"/>
+					<reportElement x="120" y="0" width="100" height="14" uuid="ea21c28d-9fbe-4788-8a29-fe3358533e4d"/>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}.get("toDate")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="162" y="0" width="20" height="14" uuid="e480bb5f-6bbd-4613-89be-906aca76f394"/>
+					<reportElement x="100" y="0" width="20" height="14" uuid="e480bb5f-6bbd-4613-89be-906aca76f394"/>
+					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[To:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="350" y="0" width="130" height="14" uuid="befb8bdd-c7eb-4132-bdf7-83918116424c"/>
+					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Brought Forward Balance:]]></text>
 				</staticText>
-				<textField pattern="#,##0.00#;#,##0.00#-">
+				<textField>
 					<reportElement x="480" y="0" width="84" height="14" uuid="be00dc66-e2df-49d8-bb00-3d0186d15729"/>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{carryforward_balance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{carryforward_balance}<0?"#,##0.00#;#,##0.00# CR":"#,##0.00# DR"]]></patternExpression>
 				</textField>
 			</frame>
 		</band>
@@ -351,7 +358,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00#;#,##0.00#-">
+			<textField>
 				<reportElement mode="Opaque" x="444" y="0" width="63" height="36" backcolor="#D7FCFA" uuid="ab57518d-e8b3-457d-88ca-ddd0f0770a31">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="95323c05-66a7-46d7-a0f2-6922fd787194"/>
 				</reportElement>
@@ -365,6 +372,7 @@
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cumulative_balance}]]></textFieldExpression>
+				<patternExpression><![CDATA[$F{cumulative_balance}<0?"#,##0.00#;#,##0.00# CR": "#,##0.00# DR"]]></patternExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="507" y="0" width="63" height="36" backcolor="#D7FCFA" uuid="76aef51c-1794-41ec-ad00-65cf801ea630">
@@ -390,9 +398,10 @@
 				<textElement markup="none"/>
 				<text><![CDATA[Closing Balance:]]></text>
 			</staticText>
-			<textField pattern="#,##0.00#;#,##0.00#-">
-				<reportElement x="97" y="22" width="100" height="15" uuid="708518bf-e403-4b04-b014-844de8aa03b4"/>
+			<textField>
+				<reportElement x="97" y="22" width="83" height="15" uuid="708518bf-e403-4b04-b014-844de8aa03b4"/>
 				<textFieldExpression><![CDATA[$V{CumelativeBalance}]]></textFieldExpression>
+				<patternExpression><![CDATA[$V{CumelativeBalance}<0?"#,##0.00#;#,##0.00# CR":"#,##0.00# DR"]]></patternExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="44" width="215" height="15" uuid="36478aa0-9960-47b1-8de3-93bb279a4d25"/>
@@ -408,7 +417,7 @@
 				</box>
 				<staticText>
 					<reportElement x="155" y="0" width="100" height="15" uuid="cef4b962-0c25-45ad-920a-96f0fd5f7e08"/>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<text><![CDATA[TOTAL]]></text>
 				</staticText>
 				<textField pattern="#,##0.000">
@@ -419,7 +428,9 @@
 						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{TotalQuantity}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;#,##0.00#-">
@@ -430,7 +441,9 @@
 						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{TotalDebit}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00#;#,##0.00#-">
@@ -441,10 +454,12 @@
 						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{TotalCredit}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00#;#,##0.00#-">
+				<textField>
 					<reportElement x="444" y="0" width="63" height="15" uuid="58b6758b-f5b7-42d2-aed5-fb05ab86c4b8"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -452,8 +467,11 @@
 						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$V{CumelativeBalance}]]></textFieldExpression>
+					<patternExpression><![CDATA[$V{CumelativeBalance}<0?"#,##0.00#;#,##0.00# CR": "#,##0.00# DR"]]></patternExpression>
 				</textField>
 			</frame>
 			<staticText>
@@ -473,7 +491,7 @@
 				<text><![CDATA[SUBJECT TO GUWAHATI JURISDICTION]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="211" y="22" width="199" height="15" uuid="58204f21-c799-4147-87f7-40e82a2bf35f"/>
+				<reportElement x="180" y="22" width="250" height="15" uuid="58204f21-c799-4147-87f7-40e82a2bf35f"/>
 				<textFieldExpression><![CDATA[$F{cumulative_balance}<0?"Amount Due to Customer":$F{cumulative_balance}>0?"Amount Due to Company":""]]></textFieldExpression>
 			</textField>
 		</band>
