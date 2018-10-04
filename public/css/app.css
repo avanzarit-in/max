@@ -1,20 +1,342 @@
-@page {
-    size: portrait;
-    counter-increment: page;
-    
+html {
+    height: 100%;
 }
 
-#pageNumber { content: counter(page) }
-
-h1 {
-    font-size: 24pt;
+body {
+    height: 100%;
 }
 
-h2 {
-    font-size: 14pt;
-    margin-top: 25px;
+.landingpage {
+    background: #f2f1f1;
+    min-height: 100vh;
+    color: #0e2335;
+    font-family: "Lato", sans-serif;
+    font-size: 1.125em;
+    line-height: 1.4;
+    text-rendering: auto;
+    overflow:scroll;
 }
 
-aside h2 {
-    font-size: 18pt;
+#page {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+
+
+.billboard {
+   /* padding-top: 2em;
+    padding-bottom: 1em;*/
+    background-color: #f2f1f1;
+    position: relative;
+    height: 330px;
+}
+
+.billboard .billboard-content {
+    text-align: center;
+    padding-bottom: 1em;
+    position: relative;
+    z-index: 2;
+    animation: title-fade 1.5s ease-in-out;
+}
+
+.site-width {
+    max-width: 1250px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.billboard .billboard-content .slider-wrap {
+    float: left;
+    display: block;
+    margin-bottom: 3em;
+}
+
+.billboard:before {
+    content: '';
+    display: block;
+    height: 7px;
+    width: 100%;
+    background: url('./../img/white-wave-edge.png') repeat-x top center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.flexslider {
+    margin: 0;
+    background: #FFF;
+    position: relative;
+    zoom: 1;
+    padding: 0;
+}
+
+.flexslider ul.slides {
+    margin: 0;
+    padding: 0;
+    zoom: 1;
+}
+
+.flexslider ul.slides li {
+    margin: 0;
+    padding: 0;
+    border: #FFF 10px solid;
+}
+
+.tiles {
+    display: table;
+    table-layout: fixed;
+    margin: auto;
+}
+
+.tiles .tile {
+    display: table-cell;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.tiles .tile a {
+    border-radius: 4px, 4px, 4px, 4px;
+    border-radius: 8px;
+    border-radius: 5%;
+    box-shadow: 5px 10px 5px #888888;
+    position: relative;
+    float: left;
+    width: 100%;
+    text-align: center;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+    background-color: #008FD3;
+    color: #fff;
+    padding:10px;
+}
+
+.tiles .tile i {
+    font-size: 3rem;
+    line-height: 75px;
+    text-align: center;
+}
+
+.tiles .tile a p {
+    padding-left: 5px;
+    margin: 0px;
+    text-align: left;
+      font-size: .9rem;
+}
+
+.tiles .tile a h3 {
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.tiles .tile a span {
+    display: inline-block;
+      
+}
+
+.tiles .tile a span.label {
+    width: 122px;
+    font-size: .9rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+.home-section {
+    background: #FFF;
+    padding-top: 1.5rem;
+   /* padding-bottom: 2rem;*/
+}
+
+.home-section .blog-col {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 48.8211739883%;
+    padding-right: 1em;
+    margin-bottom: 3em;
+}
+
+
+ .home-section .event-col {
+    float: left;
+    display: block;
+    margin-right: 2.3576520234%;
+    width: 48.8211739883%;
+    margin-right: 0;
+    padding-left: 1em;
+    margin-bottom: 3em;
+}
+
+.home-section h2.section-title {
+    font-size: 2.75rem;
+    line-height: 1.1;
+    margin: 0 0 .25em;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #0e2335;
+}
+
+
+.home-section h2.section-title b {
+    display: block;
+    color: #235783;
+    font-size: 1.125rem;
+    font-weight: 900;
+}
+
+.home-section .blog-col ul.news-list {
+    list-style: none;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.home-section .blog-col ul.news-list li.news-headline {
+    margin: 0 0 1.25em;
+    padding: 0 0 1.25em;
+    position: relative;
+}
+
+.home-section .blog-col ul.news-list li.news-headline h3.entry-title {
+    font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+h3.entry-title{
+    margin: .5em 0 .2em;
+}
+
+h3.entry-title a {
+    color: #c6093b;
+    text-decoration: none;
+}
+
+.home-section .blog-col ul.news-list li.news-headline .post-meta {
+    margin-top: 0;
+}
+.post-meta {
+    color: #235886;
+    font-size: .875rem;
+    line-height: 140%;
+    font-family: "Lato",sans-serif;
+    margin-top: .95em;
+}
+
+.home-section .blog-col ul.news-list li.news-headline .post-meta .entry-date {
+    font-weight: 700;
+    color: #0e2335;
+    font-size: .875rem;
+}
+
+.home-section .blog-col ul.news-list li.news-headline::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 70px;
+    height: 4px;
+    border-bottom: #d3dde6 4px solid;
+    display: block;
+}
+
+.tribe-events-adv-list-widget ol.vcalendar {
+    margin: 0;
+    padding: 0;
+}
+
+ .widget ol, #tinymce ol {
+    list-style: decimal;
+}
+
+
+.tribe-events-adv-list-widget ol.vcalendar li {
+    margin: 0 0 1rem;
+}
+
+.tribe-events-adv-list-widget .type-tribe_events, .tribe-mini-calendar-list-wrapper .type-tribe_events {
+    margin: 0 0 4px;
+    margin: 0 0 .25rem;
+    padding: 0;
+}
+
+.tribe-events-adv-list-widget ol li, .tribe-mini-calendar-list-wrapper ol li {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.clearfix:before, .clearfix:after, .row:before, .row:after {
+    content: '';
+    display: table;
+}
+
+.clearfix:after, .row:after {
+    clear: both;
+}
+
+.tribe-events-adv-list-widget ol.vcalendar li .date {
+    width: 3.9rem;
+    background: #235783;
+    float: left;
+    margin: 0 1em .75em 0;
+    text-transform: uppercase;
+    color: #FFF;
+    text-align: center;
+    line-height: 175%;
+    font-size: .6875rem;
+    line-height: .9;
+    padding-top: .8em;
+    font-weight: 900;
+    font-family: "Lato",sans-serif;
+}
+
+.tribe-events-adv-list-widget ol.vcalendar li h3.entry-title {
+    margin: .2em 0 .15em 5rem;
+    font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.tribe-events-adv-list-widget ol.vcalendar li p.details {
+    margin: 0 0 0 5rem;
+    color: #0e2335;
+    font-size: .875rem;
+    font-family: "Lato",sans-serif;
+    font-weight: 700;
+    padding: 0 0 1.75rem;
+    position: relative;
+}
+
+li p.details::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 70px;
+    height: 8px;
+    background: url(./../img/wave-line-blue.svg) no-repeat center bottom;
+    background-size: 70px 8px;
+    display: block;
+    opacity: .35;
+}
+
+.tribe-events-adv-list-widget ol.vcalendar li .date span {
+    font-size: 3em;
+    font-weight: 300;
+    display: block;
+    color: #0e2335;
+    background: #d3dde6;
+    padding: .25rem 0 .5rem;
+    margin-top: .45rem;
 }

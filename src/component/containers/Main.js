@@ -54,7 +54,7 @@ export default class Main extends Component {
 
         return (
             <div style={{ height: '100%' }}>
-                <Segment basic attached="top">
+                <Segment basic attached="top" style={{ height: '30px' }}>
                     <Menu size="large" icon fixed="top" inverted style={{ height: '30px' }}   >
                         <Menu.Item icon onClick={this.handleButtonClick} style={{ width: '60px' }}>
                             <Icon name="sidebar" style={{ margin: 'auto' }} />
@@ -91,7 +91,7 @@ export default class Main extends Component {
                     </Menu>
                 </Segment>
 
-                <Sidebar.Pushable attached="bottom" basic style={{ marginTop: '-20px' }} as={Segment} >
+                <Sidebar.Pushable attached="bottom" basic style={{ marginTop: '-30px' }} as={Segment} >
                     <Sidebar
                         style={{ height: '100%', paddingTop: '40px' }}
                         as={Menu}
@@ -140,8 +140,9 @@ export default class Main extends Component {
                     </Sidebar>
 
                     <Sidebar.Pusher style={{ height: '100%' }}>
-                        <Segment padded style={{ height: '100%', paddingTop: '50px',overflow:'scroll' }} attached="bottom" >
-
+                          <Route exact path='/' render={(props) => <Landing {...this.props} />} />
+                       {/** <Segment padded style={{ height: '100%', paddingTop: '50px',overflow:'scroll' }} attached="bottom" > **/}
+                        <Segment padded style={{ height: '100%', paddingTop: '50px', overflow: 'scroll' }} attached="bottom" >
                             <Route exact path='/' render={(props) => <Landing {...this.props} />} />
                             <Route exact path={`/summary`} render={(props) => <Summary {...this.props} />} />
                             <Route exact path={`/statement`} render={(props) => <Detail {...this.props} />} />
