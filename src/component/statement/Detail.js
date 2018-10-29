@@ -266,7 +266,7 @@ export default class Detail extends Component {
                                 <Table.Row>
                                     <Table.HeaderCell>Doc. Ref</Table.HeaderCell>
                                     <Table.HeaderCell>Date</Table.HeaderCell>
-                                    <Table.HeaderCell>Perticulars</Table.HeaderCell>
+                                    <Table.HeaderCell>Particulars</Table.HeaderCell>
                                     <Table.HeaderCell>Quantity</Table.HeaderCell>
                                     <Table.HeaderCell>Debit</Table.HeaderCell>
                                     <Table.HeaderCell>Credit</Table.HeaderCell>

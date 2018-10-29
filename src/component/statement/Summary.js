@@ -11,8 +11,7 @@ import NumberFormat from 'react-number-format';
 import numeral from 'numeral';
 import Api from './../utils/Api'
 
-const pageSizeOptions = [
-    {
+const pageSizeOptions = [{
         text: '20',
         value: 20
     },
@@ -106,15 +105,14 @@ export default class AppContent extends Component {
             Api.fetchStatementData(this.props.username, "summary", fromDate, toDate).then(statementData => {
                 console.log(statementData);
                 let result = this.calculateAmounts(statementData);
-                this.setState(
-                    {
-                        customerName: displayName,
-                        sapId: this.props.username,
-                        data: { payload: statementData },
-                        dataloaded: true,
-                        paymentDue: result.paymentDue,
-                        paymentReceived: result.paymentReceived
-                    });
+                this.setState({
+                    customerName: displayName,
+                    sapId: this.props.username,
+                    data: { payload: statementData },
+                    dataloaded: true,
+                    paymentDue: result.paymentDue,
+                    paymentReceived: result.paymentReceived
+                });
             }, error => {
                 console.log("ERROR ==>" + error.type);
             })
@@ -140,7 +138,7 @@ export default class AppContent extends Component {
 
         return (
             this.state.dataloaded ?
-                <div ref={this.handleContextRef}>
+            <div ref={this.handleContextRef}>
 
                     <Menu borderless pointing attached="top"  >
                         <Menu.Item>
@@ -212,7 +210,7 @@ export default class AppContent extends Component {
                                 <Table.Row>
                                     <Table.HeaderCell>Doc. Ref</Table.HeaderCell>
                                     <Table.HeaderCell>Date</Table.HeaderCell>
-                                    <Table.HeaderCell>Perticulars</Table.HeaderCell>
+                                    <Table.HeaderCell>Particulars</Table.HeaderCell>
                                     <Table.HeaderCell>Quantity</Table.HeaderCell>
                                     <Table.HeaderCell>Debit</Table.HeaderCell>
                                     <Table.HeaderCell>Credit</Table.HeaderCell>
@@ -254,8 +252,8 @@ export default class AppContent extends Component {
                                 </Table.Footer> : null}
                         </Table>
                     </Segment>
-                </div>
-                : <Dimmer active inverted>
+                </div> :
+            <Dimmer active inverted>
                     <Loader size='large'>Loading</Loader>
                 </Dimmer>
         );
