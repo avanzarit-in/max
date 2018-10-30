@@ -65,7 +65,25 @@ app.use('customer', service({
     Model: customerDB
 }));
 
-const appCustomerService= app.service('customer');
+const appCustomerService = app.service('customer');
+
+const appCustomerStatementService = [];
+
+appCustomerService.find().then(customers => {
+    customers.forEach(customer => {
+        let customerId = customer._id;
+        const statementDB = new NeDB({
+            filename: './db-data/' + customerId,
+            autoload: true
+        });
+
+        app.use('/api/' + customerId, service({
+            Model: statementDB
+        }));
+
+        appCustomerStatementService[customerId] = app.service('/api/' + customerId)
+    })
+})
 
 app.get('/api/customer', (req, res) => {
     let customerId = req.query.customerId;
@@ -76,7 +94,8 @@ app.get('/api/customer', (req, res) => {
             resolve(customer)
 
         }).catch(error => {
-            reject(error);});
+            reject(error);
+        });
     });
 
     promise.then(data => {
@@ -145,14 +164,7 @@ app.get('/api/statement', function(req, res) {
         }
 
 
-        const statementDB = new NeDB({
-            filename: './db-data/' + customerId,
-            autoload: true
-        });
 
-        app.use('/api/' + customerId, service({
-            Model: statementDB
-        }));
 
         let query = "";
         if (reportType === "summary") {
@@ -189,7 +201,7 @@ app.get('/api/statement', function(req, res) {
             }
         }
 
-        app.service('/api/' + customerId).find({
+        appCustomerStatementService[customerId].find({
             query: query
         }).then(items => {
             items.forEach(item => {
