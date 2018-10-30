@@ -65,17 +65,18 @@ app.use('customer', service({
     Model: customerDB
 }));
 
+const appCustomerService= app.service('customer');
+
 app.get('/api/customer', (req, res) => {
     let customerId = req.query.customerId;
     console.log("Fetch Custoer data for =>" + customerId);
 
     var promise = new Promise((resolve, reject) => {
-        app.service('customer').get(customerId).then(customer => {
+        appCustomerService.get(customerId).then(customer => {
             resolve(customer)
 
         }).catch(error => {
-            reject(error);
-        });
+            reject(error);});
     });
 
     promise.then(data => {
@@ -128,7 +129,7 @@ app.get('/api/statement', function(req, res) {
     // console.log("tomDate =>" + toDate.format("DD.MM.YYYY HH:mm:ss"));
     console.log(customerId + "," + fromDateFormatted + "," + toDateFormatted);
 
-    app.service('customer').get(customerId).then(customer => {
+    appCustomerService.get(customerId).then(customer => {
         let lastUpdateDateFormatted = moment([2017, 0, 1]).format('DD.MM.YYYY');
         let lastUpdateTimeFormatted = "00.00.00";
 
