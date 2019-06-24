@@ -177,5 +177,15 @@
         "country": "IN",
         "region": "ASM",
         "telephone": "9435341605"
+    },
+    {
+        "_id": "AS04038",
+        "name": "S S ENTERPRISE , SILCHAR",
+        "city": "SILCHAR , ASSAM",
+        "street": "LAKHIPUR ROAD ( WATER WORKS ROAD )",
+        "pin_code": "788001",
+        "country": "IN",
+        "region": "ASM",
+        "telephone": "9435070996"
     }
 ]

@@ -39,7 +39,7 @@ app.get('/query', function(req, res) {
         result["balance"] = response.data.d.results[0]["CarryForwardBalance"];
         response.data.d.results.map(function(item, index) {
             if (index > 0) {
-               let obj = [];
+                let obj = [];
                 obj.push(item["Reference"]);
                 obj.push(item["ClearingDocumentNo"]);
                 obj.push(item["DocumentDate"]);

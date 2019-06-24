@@ -114,6 +114,8 @@ const formatTime = (timeInText) => {
     return timeInText;
 }
 
+
+
 const computeCarryForwardBalance = (data) => {
 
     let broughtForwardBalance = 0;
@@ -149,22 +151,6 @@ app.get('/api/statement', function(req, res) {
     console.log(customerId + "," + fromDateFormatted + "," + toDateFormatted);
 
     appCustomerService.get(customerId).then(customer => {
-        let lastUpdateDateFormatted = moment([2017, 0, 1]).format('DD.MM.YYYY');
-        let lastUpdateTimeFormatted = "00.00.00";
-
-
-        if (customer.lastUpdateDate !== undefined) {
-            lastUpdateDateFormatted = moment(customer.lastUpdateDate, "DD/MM/YYYY", true).format("DD.MM.YYYY");
-        }
-
-        let lastUpdateDate = moment(lastUpdateDateFormatted, "DD.MM.YYYY", true);
-
-        if (customer.lastUpdateTime !== undefined) {
-            lastUpdateTimeFormatted = moment(customer.lastUpdateTime, "hh:mm:ss", true).format("hh.mm.ss");
-        }
-
-
-
 
         let query = "";
         if (reportType === "summary") {
@@ -208,71 +194,102 @@ app.get('/api/statement', function(req, res) {
                 result.push(item);
             });
 
-            if (toDate.isSameOrAfter(lastUpdateDate)) {
-                let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + customerId + "'&FromDate='" + lastUpdateDateFormatted + "'&FromTime='" + lastUpdateTimeFormatted + "'&$format=json";
-                console.log(url);
-                axios.get(url, {
-                    auth: {
-                        username: 'basis',
-                        password: 'gvil@2008'
-                    }
-
-                }).then(response => {
-                    if (response !== undefined && response.data !== undefined && response.data.d !== undefined && response.data.d.results !== undefined && response.data.d.results[0] !== undefined) {
-
-                        response.data.d.results.map(function(item, index) {
-                            var dateTime = moment(item["DocumentDate"] + " " + formatTime(item["EntryTime"]), "YYYYMMDD HH:mm:ss", true).toDate();
-                            if (moment(dateTime).isValid() && moment(dateTime).isSameOrAfter(fromDate) && moment(dateTime).isSameOrBefore(toDate)) {
-                                let obj = {}
-                                obj["R"] = item["Reference"];
-                                obj["CD"] = item["ClearingDocumentNo"];
-                                obj["DN"] = item["DocumentNo"];
-                                obj["DD"] = dateTime;
-                                obj["DDT"] = moment(obj["DD"]).format("DD/MM/YYYY");
-                                obj["TTT"] = item["EntryTime"];
-                                obj["P"] = item["Particulars"];
-                                obj["Q"] = item["Quantity"];
-                                obj["D"] = item["Debit"];
-                                obj["C"] = item["Credit"];
-                                obj["CB"] = item["CumulativeBalance"];
-                                obj["RM"] = item["Remarks"];
-                                result.push(obj);
-                            }
-                        })
-                    }
-                    if (reportType === "download") {
-                        result = computeCarryForwardBalance(result);
-                    }
-                    res.send(result);
-                }).catch((error) => {
-                    // Error
-                    if (error.response) {
-                        console.log(error.response.data);
-                        console.log(error.response.status);
-                        console.log(error.response.headers);
-                    }
-                    else if (error.request) {
-                        console.log("No Response Received from Server " + error.message);
-                    }
-                    else {
-
-                        console.log('Error', error.message);
-                    }
-
-                    res.sendStatus(500);
-                });
-            }
-            else {
+            fetchLatestInfo(customer, toDate, fromDate).then(data => {
+                result.concat(data);
                 if (reportType === "download") {
                     result = computeCarryForwardBalance(result);
                 }
                 res.send(result);
-            }
+            })
+            /*    if (reportType === "download") {
+                    result = computeCarryForwardBalance(result);
+                }
+                res.send(result);*/
         })
     }).catch(error => {
         res.sendStatus(404);
     })
 });
+
+
+
+const fetchLatestInfo = (customer, toDate, fromDate) => {
+    let result = [];
+    let lastUpdateDateFormatted = moment([2017, 0, 1]).format('DD.MM.YYYY');
+    let lastUpdateTimeFormatted = "00.00.00";
+
+
+    if (customer.lastUpdateDate !== undefined) {
+        lastUpdateDateFormatted = moment(customer.lastUpdateDate, "DD/MM/YYYY", true).format("DD.MM.YYYY");
+    }
+
+    let lastUpdateDate = moment(lastUpdateDateFormatted, "DD.MM.YYYY", true);
+
+    if (customer.lastUpdateTime !== undefined) {
+        lastUpdateTimeFormatted = moment(customer.lastUpdateTime, "hh:mm:ss", true).format("hh.mm.ss");
+    }
+
+
+    return new Promise(resolve => {
+        if (toDate.isSameOrAfter(lastUpdateDate)) {
+            let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + customer._id + "'&FromDate='" + lastUpdateDateFormatted + "'&FromTime='" + lastUpdateTimeFormatted + "'&$format=json";
+            console.log(url);
+            axios.get(url, {
+                auth: {
+                    username: 'basis',
+                    password: 'gvil@2008'
+                }
+
+            }).then(response => {
+                if (response !== undefined && response.data !== undefined && response.data.d !== undefined && response.data.d.results !== undefined && response.data.d.results[0] !== undefined) {
+
+                    response.data.d.results.map(function(item, index) {
+                        var dateTime = moment(item["DocumentDate"] + " " + formatTime(item["EntryTime"]), "YYYYMMDD HH:mm:ss", true).toDate();
+                        if (moment(dateTime).isValid() && moment(dateTime).isSameOrAfter(fromDate) && moment(dateTime).isSameOrBefore(toDate)) {
+                            let obj = {}
+                            obj["R"] = item["Reference"];
+                            obj["CD"] = item["ClearingDocumentNo"];
+                            obj["DN"] = item["DocumentNo"];
+                            obj["DD"] = dateTime;
+                            obj["DDT"] = moment(obj["DD"]).format("DD/MM/YYYY");
+                            obj["TTT"] = item["EntryTime"];
+                            obj["P"] = item["Particulars"];
+                            obj["Q"] = item["Quantity"];
+                            obj["D"] = item["Debit"];
+                            obj["C"] = item["Credit"];
+                            obj["CB"] = item["CumulativeBalance"];
+                            obj["RM"] = item["Remarks"];
+                            result.push(obj);
+                        }
+                    })
+
+                }
+                resolve(result);
+
+            }).catch((error) => {
+                // Error
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                }
+                else if (error.request) {
+                    console.log("No Response Received from Server " + error.message);
+                }
+                else {
+
+                    console.log('Error', error.message);
+                }
+                console.log("Sending stale results");
+                resolve(result);
+            });
+        }
+        else {
+            resolve(result);
+        }
+    })
+}
+
 
 // Set up an error handler that gives us nicer errors
 app.use(express.errorHandler());
