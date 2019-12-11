@@ -1,9 +1,16 @@
 const express = require('express');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const fs = require('fs')
 const app = express();
 const axios = require('axios')
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync('./dev.avanzarit.com.key'),
+  cert: fs.readFileSync('./dev.avanzarit.com.crt')
+};
+
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.use(function(req, res, next) {
@@ -12,17 +19,21 @@ app.use(function(req, res, next) {
     next();
 });
 app.get('/query', function(req, res) {
+	console.log(req.query);
     let customerId = req.query.custId;
     let fromDate = req.query.fromDate;
     let toDate = req.query.toDate;
+    let username = req.query.username;
+    let password = req.query.password;
+
     console.log(customerId + "," + fromDate + "," + toDate);
 
     let url = "http://122.176.66.221:8000/sap/opu/odata/sap/ZCUST_LEDGER_SRV/ByCustomerIdFromDate?ID='" + customerId + "'&FromDate='" + fromDate + "'&FromTime='00:00:00'&$format=json";
     console.log(url);
     axios.get(url, {
         auth: {
-            username: 'basis',
-            password: 'gvil@2008'
+            username: username,
+            password: password
         }
         /*,
                 proxy: {
@@ -79,5 +90,6 @@ app.get('/query', function(req, res) {
     });
 });
 
+https.createServer(options, app).listen(8080);
 
-app.listen(process.env.PORT || 8080, () => console.log("Server started on port 8080"));
+//app.listen(process.env.PORT || 8080, () => console.log("Server started on port 8080"));
