@@ -12,7 +12,7 @@
     "aws-amplify": "^1.0.8",
     "aws-amplify-react": "^2.0.0",
     "aws-sdk": "^2.316.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "cookie-storage": "^3.1.0",
     "express": "^4.16.3",
     "feathers-hooks-common": "^4.17.4",
