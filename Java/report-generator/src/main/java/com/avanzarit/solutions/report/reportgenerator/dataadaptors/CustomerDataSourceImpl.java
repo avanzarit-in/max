@@ -1,16 +1,15 @@
 package com.avanzarit.solutions.report.reportgenerator.dataadaptors;
 
-import com.avanzarit.solutions.report.reportgenerator.api.MaxReportAPI;
 import com.avanzarit.solutions.report.reportgenerator.model.CustomerModel;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static com.avanzarit.solutions.report.reportgenerator.api.MaxReportAPI.getCustomerDetails;
+
 
 public class CustomerDataSourceImpl implements JRDataSource {
 

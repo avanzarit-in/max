@@ -14,6 +14,7 @@ import net.sf.jasperreports.export.type.PdfPrintScalingEnum;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 @Component
 @Path("/report")
+@CrossOrigin(origins = "*")
 public class GenerateReportComponent {
 
     @GET

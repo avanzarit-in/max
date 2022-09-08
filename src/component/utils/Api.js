@@ -23,7 +23,7 @@ console.log(errorData);
 
     this.fetchStatementData = (customerId, reportType, fromDate, toDate) => {
      return new Promise((resolve, reject) => {
-            axios.get('http://max-1383804388.us-east-1.elb.amazonaws.com/api/statement',
+            axios.get('https://api.avanzarit.in/portal/statement',
                 {
                     params:
                     {
@@ -51,7 +51,7 @@ console.log(errorData);
 
     this.getCustomer = (customerId) => {
         return new Promise((resolve, reject) => {
-            axios.get('http://max-1383804388.us-east-1.elb.amazonaws.com/api/customer',
+            axios.get('https://api.avanzarit.in/portal/customer',
                 {
                     params:
                     {

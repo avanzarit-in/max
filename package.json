@@ -14,6 +14,7 @@
     "aws-sdk": "^2.316.0",
     "axios": "^0.18.0",
     "cookie-storage": "^3.1.0",
+    "cors": "^2.8.5",
     "express": "^4.16.3",
     "feathers-hooks-common": "^4.17.4",
     "feathers-memory": "^2.2.0",

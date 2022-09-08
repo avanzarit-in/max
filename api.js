@@ -10,9 +10,10 @@ const apiKey = require('./apiKey');
 const NeDB = require('nedb');
 const service = require('feathers-nedb');
 const moment = require('moment');
+var cors = require('cors')
 
 const app = express(feathers());
-
+app.use(cors());
 
 
 app.configure(express.rest());
@@ -71,7 +72,7 @@ const appCustomerStatementService = [];
 
 appCustomerService.find().then(customers => {
     customers.forEach(customer => {
-        let customerId = customer._id;
+        let customerId = customer._id.toUpperCase();
         const statementDB = new NeDB({
             filename: './db-data/' + customerId,
             autoload: true
@@ -86,7 +87,7 @@ appCustomerService.find().then(customers => {
 })
 
 app.get('/api/customer', (req, res) => {
-    let customerId = req.query.customerId;
+    let customerId = req.query.customerId.toUpperCase();
     console.log("Fetch Custoer data for =>" + customerId);
 
     var promise = new Promise((resolve, reject) => {
@@ -141,7 +142,7 @@ const computeCarryForwardBalance = (data) => {
 app.get('/api/statement', function(req, res) {
     let result = [];
     let reportType = req.query.reportType;
-    let customerId = req.query.customerId;
+    let customerId = req.query.customerId.toUpperCase();
     let fromDateFormatted = req.query.fromDate;
     let toDateFormatted = req.query.toDate;
     let toDate = moment(toDateFormatted + " 23:59:59", "DD.MM.YYYY HH:mm:ss", true);

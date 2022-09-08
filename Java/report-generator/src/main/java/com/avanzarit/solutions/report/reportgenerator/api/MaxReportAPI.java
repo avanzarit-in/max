@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 public class MaxReportAPI {
     private static boolean useProxy = false;
-    private static String STATEMENT_URL = "http://max-1383804388.us-east-1.elb.amazonaws.com/api/statement?customerId={0}&fromDate={1}&toDate={2}&reportType={3}";
-    private static String CUSTOMER_DETAILS_URL = "http://max-1383804388.us-east-1.elb.amazonaws.com/api/customer?customerId={0}";
+    private static String STATEMENT_URL = "https://api.avanzarit.in/portal/statement?customerId={0}&fromDate={1}&toDate={2}&reportType={3}";
+    private static String CUSTOMER_DETAILS_URL = "https://api.avanzarit.in/portal/customer?customerId={0}";
 
 
     public static CustomerModel getCustomerDetails(String customerId) throws IOException {

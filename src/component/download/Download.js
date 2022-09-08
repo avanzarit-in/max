@@ -29,7 +29,7 @@ export default class Download extends Component {
         let formattedToDate = this.props.toDate.format("DD.MM.YYYY");
         let customerId = this.props.customerId;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://max-1383804388.us-east-1.elb.amazonaws.com/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
+        xhr.open('GET', 'http://localhost:3040/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function (e) {
             if (xhr.status == 200) {
@@ -54,13 +54,7 @@ export default class Download extends Component {
         console.log(this.state.text);
         return (
             <div>
-
-                <ReCAPTCHA
-                    ref="recaptcha"
-                    sitekey="6Leb5CIUAAAAABXh137Qc04KOnDocgq_H3m19qcS"
-                    onChange={this.onChange} />
-
-                {this.state.validated ? <Button disabled={this.state.disabled} loading={this.state.loading} primary onClick={this.download}>{this.state.text}</Button> : null}
+                <Button primary onClick={this.download}>{this.state.text}</Button>
 
             </div>
 

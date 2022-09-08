@@ -3,7 +3,6 @@ package com.avanzarit.solutions.ingeration.sapintegrator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -107,9 +106,9 @@ public class SapIntegratorApplication {
             e.printStackTrace();
         }
 
-        mapper.getResult().getRawDataList().forEach(item -> {
+       /* mapper.getResult().getRawDataList().forEach(item -> {
             System.out.println(item.getCustomer());
-        });
+        });*/
         return payload;
     }
 
