@@ -29,7 +29,7 @@ export default class Download extends Component {
         let formattedToDate = this.props.toDate.format("DD.MM.YYYY");
         let customerId = this.props.customerId;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://api.avanzarit.in/report/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
+        xhr.open('GET', 'https://api.avanzarit.in/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function (e) {
             if (xhr.status == 200) {
