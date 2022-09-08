@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha'
-import axios from 'axios';
-import { Button } from 'semantic-ui-react'
+import React, {Component} from 'react';
+import {Button} from 'semantic-ui-react'
 
 
 export default class Download extends Component {
@@ -9,7 +7,7 @@ export default class Download extends Component {
         validated: false,
         loading: false,
         text: 'Download',
-        disabled:false
+        disabled: false
     }
     onChange = (value) => {
         console.log("Captcha value:", value);
@@ -29,7 +27,7 @@ export default class Download extends Component {
         let formattedToDate = this.props.toDate.format("DD.MM.YYYY");
         let customerId = this.props.customerId;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:3040/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
+        xhr.open('GET', 'https://api.avanzarit.in/report/statement?customerId=' + customerId + '&fromDate=' + formattedFromDate + '&toDate=' + formattedToDate, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function (e) {
             if (xhr.status == 200) {
