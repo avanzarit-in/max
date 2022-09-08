@@ -9,6 +9,7 @@ public class ApplicationConfig extends ResourceConfig {
         registerEndpoints();
     }
     private void registerEndpoints() {
-         register(GenerateReportComponent.class);
+        register(CORSResponseFilter.class);
+        register(GenerateReportComponent.class);
     }
 }
